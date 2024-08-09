@@ -21,7 +21,6 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id');
 
             $table->foreign('warehouse_section_id')->on('warehouse_sections')->references('id');
-            $table->foreign('section_type_id')->on('warehouse_section_types')->references('id');
             $table->foreign('product_id')->on('products')->references('id');
 
             $table->timestamps();
