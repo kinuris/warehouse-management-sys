@@ -13,6 +13,7 @@ class Product extends Model
         'internal_id',
         'name',
         'stock_qty',
+        'is_suspended',
         'price',
     ];
 

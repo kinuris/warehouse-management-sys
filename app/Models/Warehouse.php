@@ -15,5 +15,14 @@ class Warehouse extends Model
         'description',
     ];
 
+    public function sections()
+    {
+        $sections = WarehouseSection::query()
+            ->where('warehouse_id', $this->id)
+            ->get();
+
+        return $sections;
+    }
+
     use HasFactory;
 }

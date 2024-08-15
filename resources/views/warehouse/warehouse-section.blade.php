@@ -15,7 +15,7 @@
 
                 <div class="btn-group">
                     <a href="#" class="btn btn-secondary">Edit</a>
-                    <a href="#" class="btn btn-danger">Delete</a>
+                    <a href="{{ route('warehouse_section_delete', ['warehouse' => $warehouse->id, 'warehouseSection' => $section->id]) }}" class="btn btn-danger">Delete</a>
                 </div>
             </div>
         </div>

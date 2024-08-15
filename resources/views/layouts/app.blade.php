@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="{{ asset('assets/css/filepond.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/choices.min.css') }}">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -42,7 +43,14 @@
                         <!-- Authentication Links -->
 
                         @php($user = auth()->user())
-                        @if($user && $user->isSysRole('manager'))
+                        @if($user && $user->isSysRole('employee'))
+                        <li class="nav-item">
+                            <a href="{{ route('deliveries') }}" class="nav-link">Pending Deliveries</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('deliveries_success') }}" class="nav-link">Successful Deliveries</a>
+                        </li>
+                        @elseif($user && $user->isSysRole('manager'))
                         <li class="nav-item">
                             <a href="{{ route('orders') }}" class="nav-link">Order Management</a>
                         </li>
@@ -104,11 +112,16 @@
             </div>
         </nav>
 
+        @if (session('message'))
+        <div class="alert alert-info">{{ session('message') }}</div>
+        @endif
+
         <main class="py-4">
             @yield('content')
         </main>
     </div>
     <script src="{{ asset('assets/js/filepond.js') }}"></script>
+    <script src="{{ asset('assets/js/choices.min.js') }}"></script>
     @yield('script')
 </body>
 

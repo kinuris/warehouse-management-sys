@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Warehouse;
 use App\Models\WarehouseSection;
+use App\Models\WareHouseSectionProduct;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class WarehouseSectionController extends Controller
 {
@@ -14,7 +16,7 @@ class WarehouseSectionController extends Controller
     public function index(Warehouse $warehouse)
     {
         $sections = WarehouseSection::query()->where('warehouse_id', $warehouse->id)->get();
-        
+
         return view('warehouse.warehouse-section')
             ->with('warehouse', $warehouse)
             ->with('sections', $sections);
@@ -37,6 +39,7 @@ class WarehouseSectionController extends Controller
             'warehouse_id' => 'required',
             'description' => 'required',
             'image' => ['required', 'image', 'mimes:png,jpg', 'max:16000'],
+            'products' => ['nullable', 'array', 'min:0'],
         ]);
 
         $name = sha1(random_int(0, 99999999)) . '.' . $request->file('image')->extension();
@@ -44,7 +47,14 @@ class WarehouseSectionController extends Controller
 
         $validated['image_link'] = $name;
 
-        WarehouseSection::query()->create($validated);
+        $section = WarehouseSection::query()->create($validated);
+
+        foreach ($validated['products'] ?? [] as $product) {
+            WareHouseSectionProduct::query()->create([
+                'warehouse_section_id' => $section->id,
+                'product_id' => $product,
+            ]);
+        }
 
         return redirect()->route('warehouse_section', ['warehouse' => $warehouse->id])->with('message', 'Section Added Successfully');
     }
@@ -73,11 +83,30 @@ class WarehouseSectionController extends Controller
         //
     }
 
+    public function delete(Warehouse $warehouse, WarehouseSection $warehouseSection)
+    {
+        return view('warehouse.warehouse-section-delete')
+            ->with('section', $warehouseSection)
+            ->with('warehouse', $warehouse);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(WarehouseSection $warehouseSection)
+    public function destroy(Warehouse $warehouse, WarehouseSection $warehouseSection)
     {
-        //
+        Storage::delete('public/section/images/' . $warehouseSection->image_link);
+
+        $sectionProducts = WareHouseSectionProduct::query()
+            ->where('warehouse_section_id', '=', $warehouseSection->id)
+            ->get();
+
+        foreach ($sectionProducts as $sectionProduct) {
+            $sectionProduct->delete();
+        }
+
+        $warehouseSection->delete();
+
+        return redirect()->route('warehouse_section', ['warehouse' => $warehouse->id])->with('message', 'Section Deleted Successfully');
     }
 }

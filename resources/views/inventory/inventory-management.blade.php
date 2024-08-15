@@ -4,7 +4,7 @@
 <div class="container">
     <div class="d-lg-flex justify-content-between">
         <h1>Inventory Managment</h1>
-        <form class="d-flex" action="{{ route('employee_attendance') }}">
+        <form class="d-flex" action="{{ route('inventory') }}">
             <input type="text" value="{{ request()->query('search') }}" name="search" id="search" placeholder="Search" class="form-control" style="min-width: 200px;">
 
             <!-- <select class="ms-2 form-select" name="scope" id="scope">
@@ -26,6 +26,7 @@
                 <th>Name</th>
                 <th>Price</th>
                 <th>Stock Qty.</th>
+                <th>Actions</th>
             </thead>
             <tbody>
                 @foreach ($products as $product)
@@ -34,6 +35,16 @@
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->price }}</td>
                     <td>{{ $product->stock_qty }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{ route('inventory_edit', ['inventory' => $product->id]) }}" class="btn btn-primary">Edit</a>
+                            @if ($product->is_suspended)
+                            <a href="{{ route('inventory_delete', ['inventory' => $product->id]) }}" class="btn btn-info">Allow</a> 
+                            @else
+                            <a href="{{ route('inventory_delete', ['inventory' => $product->id]) }}" class="btn btn-danger">Suspend</a>
+                            @endif
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

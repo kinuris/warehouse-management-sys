@@ -16,8 +16,8 @@
             </div>
             <div class="card-body">
                 <h5 class="card-title">{{ $warehouse->name }}</h5>
-                <p class="card-text m-0">Description: {{ $warehouse->description }}</p>
-                <p class="card-text">Sections: {{ $warehouse->description }}</p>
+                <p class="card-text">Description: {{ $warehouse->description }}</p>
+                <p class="card-text text-secondary">No. of Sections: {{ count($warehouse->sections()) }}</p>
 
                 <div class="btn-group">
                     <a href="{{ route('warehouse_section', ['warehouse' => $warehouse->id]) }}" class="btn btn-primary">Sections</a>

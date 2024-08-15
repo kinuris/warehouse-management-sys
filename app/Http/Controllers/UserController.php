@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EmployeeRole;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -46,14 +47,29 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('user.user-edit')->with('user', $user);
+        $roles = EmployeeRole::all();
+
+        return view('user.user-edit')
+            ->with('user', $user)
+            ->with('employee_roles', $roles);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
-    {
+    public function update(Request $request, User $user) {
+        $validated = $request->validate([
+            'first_name' => ['required'],
+            'middle_name' => ['nullable'],
+            'last_name' => ['required'],
+            'employee_role_id' => ['required'],
+            'email' => ['required', 'email'],
+            'phone' => ['required', 'min:11', 'max:11'],
+        ]);
+
+        $user->update($validated);
+
+        return redirect()->route('users')->with('message', 'User updated successfully');
     }
 
     public function delete(User $user)
@@ -66,6 +82,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $user->update(['is_suspended' => !$user->is_suspended]);
+
+        return redirect()->route('users')->with('message', 'User suspended successfully');
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DeliveryRecordController;
 use App\Http\Controllers\EmployeeAttendanceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InventoryController;
@@ -49,7 +50,7 @@ Route::controller(UserController::class)->group(function () {
         ->name('users_delete')
         ->can('delete', User::class);
 
-    Route::post('/user/delete/{user}', 'destroy')
+    Route::get('/user/destroy/{user}', 'destroy')
         ->name('users_destroy')
         ->can('view', User::class);
 });
@@ -58,6 +59,46 @@ Route::controller(OrderController::class)->group(function () {
     Route::get('/order', 'index')
         ->name('orders')
         ->can('create', User::class);
+
+    Route::get('/order/add', 'create')
+        ->name('order_add')
+        ->can('create', User::class);
+
+    Route::post('/order/add', 'store')
+        ->name('order_store')
+        ->can('create', User::class);
+
+    Route::post('/order/stage/{product}/add', 'stageAdd')
+        ->name('order_stage_add')
+        ->can('create', User::class);
+
+    Route::post('/order/stage/{product}/sub', 'stageSub')
+        ->name('order_stage_sub')
+        ->can('create', User::class);
+
+    Route::get('/order/itemview/{order}', 'itemView')
+        ->name('item_view')
+        ->can('view', User::class);
+
+    Route::get('/order/deliver', 'deliveries')
+        ->middleware('auth')
+        ->name('deliveries');
+
+    Route::post('/order/deliver/{order}', 'deliver')
+        ->middleware('auth')
+        ->name('order_deliver');
+
+    Route::get('/delivery/add/{order}', 'createDelivery')
+        ->middleware('auth')
+        ->name('delivery_add');
+
+    Route::get('/delivery/success', 'deliveriesSuccess')
+        ->middleware('auth')
+        ->name('deliveries_success');
+
+    Route::get('/delivery/proof/{order}', 'deliveryProof')
+        ->middleware('auth')
+        ->name('delivery_proof');
 });
 
 Route::controller(EmployeeAttendanceController::class)->group(function () {
@@ -72,6 +113,14 @@ Route::controller(EmployeeAttendanceController::class)->group(function () {
     Route::post('/attendance/add', 'store')
         ->name('attendance_store')
         ->can('create', User::class);
+
+    Route::get('/attendance/timeout/{attendance}', 'timeout')
+        ->name('attendance_add_timeout')
+        ->can('update', User::class);
+
+    Route::post('/attendance/timeout/{attendance}', 'addTimeout')
+        ->name('attendance_store_timeout')
+        ->can('update', User::class);
 });
 
 Route::controller(InventoryController::class)->group(function () {
@@ -86,6 +135,22 @@ Route::controller(InventoryController::class)->group(function () {
     Route::post('/inventory/add', 'store')
         ->name('inventory_store')
         ->can('create', User::class);
+
+    Route::get('/inventory/edit/{inventory}', 'edit')
+        ->name('inventory_edit')
+        ->can('update', User::class);
+
+    Route::post('/inventory/edit/{inventory}', 'update')
+        ->name('inventory_update')
+        ->can('update', User::class);
+
+    Route::get('/inventory/delete/{inventory}', 'delete')
+        ->name('inventory_delete')
+        ->can('delete', User::class);
+
+    Route::get('/inventory/destroy/{inventory}', 'destroy')
+        ->name('inventory_destroy')
+        ->can('update', User::class);
 });
 
 Route::controller(WarehouseController::class)->group(function () {
@@ -114,4 +179,12 @@ Route::controller(WarehouseSectionController::class)->group(function () {
     Route::post('/warehouse/{warehouse}/section/add', 'store')
         ->name('warehouse_section_store')
         ->can('create', Warehouse::class);
+
+    Route::get('/warehouse/{warehouse}/section/delete/{warehouseSection}', 'delete')
+        ->name('warehouse_section_delete')
+        ->can('delete', Warehouse::class);
+
+    Route::get('/warehouse/{warehouse}/section/destroy/{warehouseSection}', 'destroy')
+        ->name('warehouse_section_destroy')
+        ->can('delete', Warehouse::class);
 });

@@ -25,6 +25,8 @@ return new class extends Migration
             $table->unsignedBigInteger('system_role_id');
             $table->unsignedBigInteger('employee_role_id');
 
+            $table->boolean('is_suspended')->default(false);
+
             $table->foreign('system_role_id')->on('system_roles')->references('id');
             $table->foreign('employee_role_id')->on('employee_roles')->references('id');
 

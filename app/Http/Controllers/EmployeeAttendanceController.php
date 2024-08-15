@@ -28,6 +28,8 @@ class EmployeeAttendanceController extends Controller
 
         $attendance = EmployeeAttendance::query()
             ->where('date', '>=', $newDate)
+            ->orderBy('date', 'DESC')
+            ->orderBy('in_time', 'DESC')
             ->get();
 
         return view('attendance.employee-attendance-management')->with('attendance', $attendance);
@@ -59,7 +61,7 @@ class EmployeeAttendanceController extends Controller
 
         EmployeeAttendance::query()->create($validated);
 
-        return redirect(route('employee_attendance'))->with('message', 'Attendance record added successfully');
+        return redirect()->route('employee_attendance')->with('message', 'Attendance record added successfully');
     }
 
     /**
@@ -92,5 +94,24 @@ class EmployeeAttendanceController extends Controller
     public function destroy(EmployeeAttendance $employeeAttendance)
     {
         //
+    }
+
+    public function timeout(EmployeeAttendance $attendance)
+    {
+        return view('user.add-timeout')
+            ->with('attendance', $attendance);
+    }
+
+    public function addTimeout(Request $request, EmployeeAttendance $attendance)
+    {
+        $validated = $request->validate([
+            'time-out' => ['required', 'date_format:H:i'],
+        ]);
+
+        $validated['out_time'] = $validated['time-out'];
+
+        $attendance->update($validated);
+
+        return redirect()->route('employee_attendance')->with('message', 'Timeout added successfully');
     }
 }

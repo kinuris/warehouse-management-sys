@@ -14,10 +14,7 @@ return new class extends Migration
         Schema::create('ware_house_section_products', function (Blueprint $table) {
             $table->id();
 
-            $table->string('image_link');
-
             $table->unsignedBigInteger('warehouse_section_id');
-            $table->unsignedBigInteger('section_type_id');
             $table->unsignedBigInteger('product_id');
 
             $table->foreign('warehouse_section_id')->on('warehouse_sections')->references('id');

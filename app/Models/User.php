@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -27,6 +25,7 @@ class User extends Authenticatable
         'phone',
         'system_role_id',
         'employee_role_id',
+        'is_suspended',
         'password',
     ];
 
@@ -39,13 +38,23 @@ class User extends Authenticatable
         'password',
     ];
 
-    public static function getEmployees(): Collection {
+    public function mostRecentAttendance(): EmployeeAttendance | null
+    {
+        return EmployeeAttendance::query()
+            ->where('employee_id', '=', $this->id)
+            ->orderBy('date', 'desc')
+            ->first();
+    }
+
+    public static function getEmployees(): Collection
+    {
         $id = SystemRole::query()->where('name', '=', 'employee')->first()->id;
 
         return User::query()->where('system_role_id', '=', $id)->get();
     }
 
-    public static function create($fields = []): User {
+    public static function create($fields = []): User
+    {
         $role = SystemRole::query()->find($fields['system_role_id']);
 
         return User::query()->create(array_merge($fields, [
@@ -53,7 +62,8 @@ class User extends Authenticatable
         ]));
     }
 
-    public static function getNoCollisionID(): string {
+    public static function getNoCollisionID(): string
+    {
         while (true) {
             $end = random_int(0, 9999);
 
@@ -63,13 +73,17 @@ class User extends Authenticatable
                 return $end;
             }
         }
-    } 
+    }
 
-    public function getFullname(): string {
+
+
+    public function getFullname(): string
+    {
         return $this->first_name . ' ' . ($this->middle_name ? $this->middle_name[0] . '.' : '') . ' ' . $this->last_name;
     }
 
-    public function findInternal(string $id): User {
+    public function findInternal(string $id): User
+    {
         return User::query()->where('internal_id', '=', $id)->first();
     }
 
@@ -83,7 +97,7 @@ class User extends Authenticatable
     public function isEmpRole(string $role): bool
     {
         $role = EmployeeRole::query()->where('name', $role)->first();
-        
+
         return $role->id === $this->employee_role_id;
     }
 }

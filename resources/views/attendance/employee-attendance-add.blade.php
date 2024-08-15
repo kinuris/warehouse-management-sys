@@ -17,13 +17,19 @@
 
         <div class="d-flex mb-4 mt-3">
             <div class="form-floating" style="flex: 1">
-                <input class="form-control" type="date" name="date" id="date" value="<?php echo date('Y-m-d'); ?>">
+                <input class="form-control @error('date') is-invalid @enderror" type="date" name="date" id="date" value="{{ old('date', date('Y-m-d')) }}">
                 <label class="form-label" for="date">Date</label>
+                @error('date')
+                <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
             <div class="mx-2"></div>
             <div class="form-floating" style="flex: 1">
-                <input class="form-control" type="time" name="time-in" id="time-in">
+                <input class="form-control @error('time-in') is-invalid @enderror" type="time" name="time-in" id="time-in" value="{{ old('time-in') }}">
                 <label class="form-label" for="time-in">Time In</label>
+                @error('time-in')
+                <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
         </div>
 

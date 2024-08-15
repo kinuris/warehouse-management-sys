@@ -36,9 +36,19 @@
                     <td>{{ $user->internal_id }}</td>
                     <td>{{ $user->getFullname() }}</td>
                     <td>{{ $record->date }}</td>
-                    <td>{{ $record->status }}</td>
+                    <td class="text-{{ $record->getStatusColor() }}">{{ $record->getStatus() }}</td>
                     <td>{{ $record->in_time }}</td>
-                    {!! $record->out_time ? '<td>$record->out_time</td>' : '<td><a href="" class="btn btn-secondary">Add Timeout</a></td>' !!}
+                    @if ($record->out_time)
+                    <td>{{ $record->out_time }}</td>
+                    @else
+                    <td>
+                        @if (!$record->isPast())
+                        <a href="{{ route('attendance_add_timeout', ['attendance' => $record->id]) }}" class="btn btn-secondary">Add Timeout</a>
+                        @else
+                        <div class="text-danger">No Time-out</div>
+                        @endif
+                    </td>
+                    @endif
                 </tr>
                 @endforeach
             </tbody>
