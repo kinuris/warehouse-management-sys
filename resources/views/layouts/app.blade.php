@@ -16,6 +16,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}" type="image/x-icon">
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -26,6 +27,7 @@
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
+                    <img class="me-2" style="width: 32px;" src="{{ asset('assets/logo.jpg') }}" alt="Logo">
                     Sobida WMS
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -122,6 +124,8 @@
     </div>
     <script src="{{ asset('assets/js/filepond.js') }}"></script>
     <script src="{{ asset('assets/js/choices.min.js') }}"></script>
+    <script src="{{ asset('assets/js/fullcalendar.min.js') }}"></script>
+    <script src="{{ asset('assets/js/charts.min.js') }}"></script>
     @yield('script')
 </body>
 

@@ -86,4 +86,8 @@ class UserController extends Controller
 
         return redirect()->route('users')->with('message', 'User suspended successfully');
     }
+
+    public function attendanceRecords(User $user) {
+        return view('user.user-attendance')->with('user', $user);
+    }
 }

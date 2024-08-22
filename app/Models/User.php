@@ -38,6 +38,12 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function getAttendanceRecords(): Collection {
+        return EmployeeAttendance::query()
+            ->where('employee_id', '=', $this->id)
+            ->get();
+    }
+
     public function mostRecentAttendance(): EmployeeAttendance | null
     {
         return EmployeeAttendance::query()
@@ -74,8 +80,6 @@ class User extends Authenticatable
             }
         }
     }
-
-
 
     public function getFullname(): string
     {

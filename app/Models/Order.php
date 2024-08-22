@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use DateInterval;
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,30 +18,112 @@ class Order extends Model
         'client_phone',
         'address',
         'delivery_time',
+        'is_cancelled',
     ];
+
+    public function getItemsAndQuantity()
+    {
+        $orderItems = OrderItem::query()
+            ->where('order_id', '=', $this->id)
+            ->get();
+
+        $items = array();
+        foreach ($orderItems as $orderItem) {
+            array_push($items, [$orderItem->product_id, $orderItem->quantity]);
+        }
+
+        return $items;
+    }
 
     public function isDelivered(): bool
     {
         return DeliveryRecord::query()->where('order_id', '=', $this->id)->exists();
     }
 
-    public function isFailed(): bool {
+    public function isOnTimeDelivered(): bool
+    {
         $record = DeliveryRecord::query()->where('order_id', '=', $this->id)->first();
 
-        return date_create($this->delivery_time) < date_create('now') && $record === null;
+        return $record !== null && date_create($record->delivery_time) <= date_create($this->delivery_time);
     }
 
-    public function isPending(): bool {
-        return !$this->isDelivered() && !$this->isFailed();
+    public function isLateNotDelivered(): bool
+    {
+        return !$this->isDelivered() && date_create($this->delivery_time) < date_create('now') && !$this->isFailed();
+    }
+
+    public function isLateDelivered(): bool
+    {
+        // $record = DeliveryRecord::query()->where('order_id', '=', $this->id)->first();
+
+        // return $record !== null && date_create($record->delivery_time) > date_create($this->delivery_time);
+
+        return !$this->isOnTimeDelivered() && $this->isDelivered();
+    }
+
+    public function isFailed(): bool
+    {
+        // $record = DeliveryRecord::query()->where('order_id', '=', $this->id)->first();
+
+        // return date_create($this->delivery_time) < date_create('now') && $record === null;
+
+        return $this->is_cancelled;
+    }
+
+    public function isPending(): bool
+    {
+        $exists = DeliveryRecord::query()->where('order_id', '=', $this->id)->exists();
+
+        return !$exists && new DateTime($this->delivery_time) > date_create('now');
+    }
+
+    public static function pastDay(int $dayOffset = 0)
+    {
+        // $upper = date_create('now')->sub(new DateInterval('P' . $dayOffset . 'D'))->format('Y-m-d');
+        // $lower = date_create($upper)->sub(new DateInterval('P1D'))->format('Y-m-d');
+
+        $now = date_create('now')->format('Y-m-d H:i:s');
+
+        if ($dayOffset > 0) {
+            $now = date('Y-m-d', strtotime('-' . ($dayOffset - 1) . ' days')); 
+        }
+
+        $lower = date_create('now')->format('Y-m-d');
+
+        if ($dayOffset > 0) {
+            $lower = date('Y-m-d', strtotime('-' . ($dayOffset) . ' days'));
+        }
+
+        return self::query()
+            ->where('created_at', '<', $now)
+            ->where('created_at', '>', $lower)
+            ->where('is_cancelled', '=', '0')
+            ->get();
+    }
+
+    public static function total($orders)
+    {
+        $total = 0;
+        foreach ($orders as $order) {
+            $items = $order->getItemsAndQuantity();
+
+            foreach ($items as [$item, $qty]) {
+                $item = Product::find($item);
+
+                $total += $item->price * $qty;
+            }
+        }
+
+        return $total;
     }
 
     public static function notDelivered()
     {
-        $records = self::where('delivery_time', '>', now())->get();
+        $records = self::query()->where('is_cancelled', '=', '0')->get();
 
         $notDelivered = array();
         foreach ($records as $record) {
-            if (DeliveryRecord::where('order_id', $record->id)->count() === 0) {
+            if (!DeliveryRecord::where('order_id', $record->id)->exists()) {
                 array_push($notDelivered, $record);
             }
         }
@@ -63,14 +147,7 @@ class Order extends Model
 
     public static function failed()
     {
-        $records = self::where('delivery_time', '<', now())->get();
-
-        $failed = array();
-        foreach ($records as $record) {
-            if (DeliveryRecord::where('order_id', $record->id)->count() === 0) {
-                array_push($failed, $record);
-            }
-        }
+        $failed = self::where('is_cancelled', '=', '0')->get();
 
         return $failed;
     }

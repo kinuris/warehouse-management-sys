@@ -13,6 +13,10 @@
         </div>
     </div>
 
+    @if (auth()->user()->isSysRole('manager'))
+    <a href="{{ route('orders') }}" class="mt-4 btn btn-secondary">Back</a>
+    @else
     <a href="{{ route('deliveries_success') }}" class="mt-4 btn btn-secondary">Back</a>
+    @endif
 </div>
 @endsection

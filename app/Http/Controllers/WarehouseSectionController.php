@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Warehouse;
 use App\Models\WarehouseSection;
 use App\Models\WareHouseSectionProduct;
@@ -108,5 +109,16 @@ class WarehouseSectionController extends Controller
         $warehouseSection->delete();
 
         return redirect()->route('warehouse_section', ['warehouse' => $warehouse->id])->with('message', 'Section Deleted Successfully');
+    }
+
+    public function itemSections(Product $product)
+    {
+        $sectionProducts = WareHouseSectionProduct::query()
+            ->where('product_id', '=', $product->id)
+            ->get();
+
+        return view('warehouse.item-sections')
+            ->with('sections', $sectionProducts)
+            ->with('item', $product);
     }
 }

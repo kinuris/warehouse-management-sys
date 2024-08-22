@@ -16,4 +16,8 @@ class WarehouseSection extends Model
     ];
 
     use HasFactory;
+
+    public function getWarehouse(): Warehouse {
+        return Warehouse::query()->find($this->warehouse_id); 
+    }
 }

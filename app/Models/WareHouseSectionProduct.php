@@ -15,4 +15,8 @@ class WareHouseSectionProduct extends Model
         'warehouse_section_id',
         'product_id',
     ];
+
+    public function getWarehouseSection(): WarehouseSection {
+        return WarehouseSection::query()->find($this->warehouse_section_id); 
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -53,10 +54,12 @@ class EmployeeAttendance extends Model
         if ($isSameDay && !$this->out_time) {
             return 'Present';
         } else if (($isSameDay && $this->out_time) || (!$isSameDay && $this->out_time)) {
-            $dutyHrs = strtotime($this->out_time) - strtotime($this->in_time);
-            $dutyHrs = $dutyHrs / 3600;
+            $seconds = strtotime($this->out_time) - strtotime($this->in_time);
 
-            return 'Finished Duty (' . $dutyHrs . ' hrs)';
+            $hours = floor($seconds / 3600);
+            $minutes = floor(($seconds % 3600) / 60);
+
+            return 'Finished Duty (' . $hours . ' hrs, ' . $minutes . ' mins)';
         } else if (!$isSameDay && !$this->out_time) {
             return 'No Timeout';
         }
@@ -64,7 +67,6 @@ class EmployeeAttendance extends Model
 
     public function getStatusColor()
     {
-
         if (!User::find($this->employee_id)->isSysRole('employee')) {
             throw new Exception('User is not an employee');
         }

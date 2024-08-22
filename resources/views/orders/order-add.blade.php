@@ -62,6 +62,12 @@
                         <th>Price</th>
                         <th>Stock Qty.</th>
                         <th>Actions</th>
+                        <th>
+                            <div class="form-floating">
+                                <input value="1" class="form-control" style="max-width: 128px; min-width: 128px;" type="number" step="1" min="1" name="quantity" id="quantity" placeholder="Quantity">
+                                <label class="form-label" for="quantity">Quantity:</label>
+                            </div>
+                        </th>
                     </thead>
                     <tbody>
                         @php($stage = Session::get('orderStage') ?? [])
@@ -74,7 +80,6 @@
                             <td>{{ $product->stock_qty }}<b class="text-danger" style="font-size: 12px;">{{ isset($stage[$product->id]) ? ' - ' . $stage[$product->id] : '' }}</b></td>
                             <td>
                                 <div class="d-flex">
-                                    <input value="1" class="form-control" style="max-width: 96px; min-width: 96px;" type="number" step="1" min="1" name="quantity" id="quantity" placeholder="Quantity">
                                     <div class="btn-group mx-2">
                                         <button type="submit" formaction="{{ route('order_stage_add', ['product' => $product->id]) }}" class="btn btn-primary">Add</button>
                                         <button type="submit" formaction="{{ route('order_stage_sub', ['product' => $product->id]) }}" class="btn btn-danger">Sub</button>

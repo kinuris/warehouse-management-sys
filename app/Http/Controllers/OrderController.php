@@ -195,12 +195,18 @@ class OrderController extends Controller
         //
     }
 
+    public function delete(Order $order) {
+        return view('orders.order-delete')->with('order', $order);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(EmployeeTaskQueue $employeeTaskQueue)
+    public function destroy(Order $order)
     {
-        //
+       $order->update(['is_cancelled' => true]); 
+
+       return redirect()->route('orders')->with('message', 'Order cancelled successfully');
     }
 
     public function stageAdd(Request $request, Product $product)

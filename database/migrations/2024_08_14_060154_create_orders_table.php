@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('client_phone');
             $table->string('address');
             $table->dateTime('delivery_time');
+            $table->boolean('is_cancelled')->default(false);
             $table->timestamps();
         });
     }

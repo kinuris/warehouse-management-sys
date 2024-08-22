@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\EmployeeRole;
+use App\Models\Product;
 use App\Models\SystemRole;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -43,6 +44,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'laborer'
         ]);
 
+        // NOTE: Manager account
         User::create([
             'first_name' => 'Seed',
             'middle_name' => null,
@@ -54,6 +56,7 @@ class DatabaseSeeder extends Seeder
             'employee_role_id' => $emp_role->id,
         ]);
 
+        // NOTE: Admin account
         User::create([
             'first_name' => 'Seed',
             'middle_name' => null,
@@ -64,5 +67,7 @@ class DatabaseSeeder extends Seeder
             'system_role_id' => $admin_role->id,
             'employee_role_id' => $emp_role->id,
         ]);
+
+        Product::factory(50)->create();
     }
 }

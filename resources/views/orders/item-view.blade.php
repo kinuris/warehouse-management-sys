@@ -15,6 +15,7 @@
                 <th>Quantity</th>
                 <th>Price</th>
                 <th>Total</th>
+                <th>Actions</th>
             </thead>
             <tbody>
                 @foreach($orderItems as [$item, $quantity])
@@ -24,6 +25,9 @@
                     <td>{{ $quantity }}</td>
                     <td>{{ $item->price }} PHP</td>
                     <td>{{ $item->price * $quantity }} PHP</td>
+                    <td>
+                        <a class="btn btn-info" href="{{ route('item_sections', ['product' => $item->id]) }}">View In Warehouse</a>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

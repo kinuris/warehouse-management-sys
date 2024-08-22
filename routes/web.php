@@ -53,6 +53,10 @@ Route::controller(UserController::class)->group(function () {
     Route::get('/user/destroy/{user}', 'destroy')
         ->name('users_destroy')
         ->can('view', User::class);
+
+    Route::get('/user/attendance/{user}', 'attendanceRecords')
+        ->name('users_attendance')
+        ->can('view', User::class);
 });
 
 Route::controller(OrderController::class)->group(function () {
@@ -76,9 +80,17 @@ Route::controller(OrderController::class)->group(function () {
         ->name('order_stage_sub')
         ->can('create', User::class);
 
+    Route::get('/order/delete/{order}', 'delete')
+        ->middleware('auth')
+        ->name('order_delete');
+
+    Route::get('/order/destory/{order}', 'destroy')
+        ->can('update', User::class)
+        ->name('order_destroy');
+
     Route::get('/order/itemview/{order}', 'itemView')
-        ->name('item_view')
-        ->can('view', User::class);
+        ->middleware('auth')
+        ->name('item_view');
 
     Route::get('/order/deliver', 'deliveries')
         ->middleware('auth')
@@ -168,6 +180,10 @@ Route::controller(WarehouseController::class)->group(function () {
 });
 
 Route::controller(WarehouseSectionController::class)->group(function () {
+    Route::get('/warehouse/item/{product}', 'itemSections')
+        ->middleware('auth')
+        ->name('item_sections');
+
     Route::get('/warehouse/{warehouse}/section', 'index')
         ->name('warehouse_section')
         ->can('viewAny', Warehouse::class);

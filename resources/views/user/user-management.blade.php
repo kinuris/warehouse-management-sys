@@ -28,14 +28,14 @@
                     <td class="text-success">Working</td>
                     @elseif ($recent->getStatusType() === 'absent')
                     <td class="text-danger">No Sign-in</td>
-                    @elseif ($recent->getStatusType() === 'finished')
+                    @elseif ($recent->getStatusType() === 'finished' && !$recent->isPast())
                     <td class="text-primary">Finished</td>
                     @else
                     <td class="text-danger">No Sign-in</td>
                     @endif
                     <td>
                         <div class="btn-group">
-                            <a href="#" class="btn btn-primary">Attendance</a>
+                            <a href="{{ route('users_attendance', ['user' => $user->id]) }}" class="btn btn-primary">Attendance</a>
                             <a href="{{ route('users_edit', ['user' => $user->id]) }}" class="btn btn-success">Edit</a>
                             @if ($user->is_suspended)
                             <a href="{{ route('users_delete', ['user' => $user->id]) }}" class="btn btn-info">Allow</a>
