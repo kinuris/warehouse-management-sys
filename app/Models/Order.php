@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use DateInterval;
 use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -54,19 +53,11 @@ class Order extends Model
 
     public function isLateDelivered(): bool
     {
-        // $record = DeliveryRecord::query()->where('order_id', '=', $this->id)->first();
-
-        // return $record !== null && date_create($record->delivery_time) > date_create($this->delivery_time);
-
         return !$this->isOnTimeDelivered() && $this->isDelivered();
     }
 
     public function isFailed(): bool
     {
-        // $record = DeliveryRecord::query()->where('order_id', '=', $this->id)->first();
-
-        // return date_create($this->delivery_time) < date_create('now') && $record === null;
-
         return $this->is_cancelled;
     }
 
@@ -85,7 +76,7 @@ class Order extends Model
         $now = date_create('now')->format('Y-m-d H:i:s');
 
         if ($dayOffset > 0) {
-            $now = date('Y-m-d', strtotime('-' . ($dayOffset - 1) . ' days')); 
+            $now = date('Y-m-d', strtotime('-' . ($dayOffset - 1) . ' days'));
         }
 
         $lower = date_create('now')->format('Y-m-d');
@@ -119,7 +110,9 @@ class Order extends Model
 
     public static function notDelivered()
     {
-        $records = self::query()->where('is_cancelled', '=', '0')->get();
+        $records = self::query()
+            ->where('is_cancelled', '=', '0')
+            ->get();
 
         $notDelivered = array();
         foreach ($records as $record) {
