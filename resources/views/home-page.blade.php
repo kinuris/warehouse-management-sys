@@ -101,6 +101,10 @@
         data: {
             labels: [
                 <?php
+                if (empty($accum)) {
+                    echo "'No sales yet'";
+                }
+
                 foreach ($accum as $id => $qty) {
                     $product = Product::find($id);
 
@@ -112,6 +116,10 @@
             datasets: [{
                 data: [
                     <?php
+                    if (empty($accum)) {
+                        echo '1';
+                    }
+
                     foreach ($accum as $id => $qty) {
                         echo $qty . ',';
                         echo "\n";
@@ -120,6 +128,10 @@
                 ],
                 backgroundColor: [
                     <?php
+                    if (empty($accum)) {
+                        echo "'#333333'";
+                    }
+
                     foreach ($colors as $color) {
                         echo "'" . $color . "'" . ',';
                     }
@@ -127,6 +139,10 @@
                 ],
                 hoverBackgroundColor: [
                     <?php
+                    if (empty($accum)) {
+                        echo "'#333333'";
+                    }
+
                     foreach ($colors as $color) {
                         echo "'" . $color . "'" . ',';
                     }

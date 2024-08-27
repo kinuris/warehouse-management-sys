@@ -5,48 +5,78 @@
     <h1>Issue Order</h1>
     <form action="{{ route('order_store') }}" method="post">
         @csrf
-        <div class="border rounded p-3 pt-2">
-            <p>Client Selection</p>
-            <div class="d-flex">
-                <div class="form-floating" style="flex: 1">
-                    <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="text" value="{{ old('name') }}" name="name" id="name">
-                    <label class="form-label" for="name">Client Name:</label>
-                    @if ($errors->has('name'))
+        <div class="d-flex">
+            <div class="border rounded p-3 pt-2" style="flex: 2;">
+                <p>Client Selection</p>
+                <div class="d-flex">
+                    <div class="form-floating" style="flex: 1">
+                        <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="text" value="{{ old('name') }}" name="name" id="name">
+                        <label class="form-label" for="name">Client Name:</label>
+                        @if ($errors->has('name'))
+                        <div class="invalid-feedback">
+                            {{ $errors->first('name') }}
+                        </div>
+                        @endif
+                    </div>
+                    <div class="mx-2"></div>
+                    <div class="form-floating" style="flex: 1">
+                        <input class="form-control {{ $errors->has('phone') ? 'is-invalid' : '' }}" type="tel" value="{{ old('phone') }}" name="phone" id="tel">
+                        <label class="form-label" for="tel">Client Phone:</label>
+                        @if ($errors->has('phone'))
+                        <div class="invalid-feedback">
+                            {{ $errors->first('phone') }}
+                        </div>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="form-floating my-3">
+                    <input class="form-control {{ $errors->has('address') ? 'is-invalid' : '' }}" type="text" value="{{ old('address') }}" name="address" id="address">
+                    <label class="form-label" for="address">Client Address:</label>
+                    @if ($errors->has('address'))
                     <div class="invalid-feedback">
-                        {{ $errors->first('name') }}
+                        {{ $errors->first('address') }}
                     </div>
                     @endif
                 </div>
-                <div class="mx-2"></div>
-                <div class="form-floating" style="flex: 1">
-                    <input class="form-control {{ $errors->has('phone') ? 'is-invalid' : '' }}" type="tel" value="{{ old('phone') }}" name="phone" id="tel">
-                    <label class="form-label" for="tel">Client Phone:</label>
-                    @if ($errors->has('phone'))
+
+                <div class="form-floating">
+                    <input class="form-control {{ $errors->has('delivery_time') ? 'is-invalid' : '' }}" type="datetime-local" value="{{ old('delivery_time') }}" name="delivery_time" id="time">
+                    <label for="time">Delivery Time (Deadline): </label>
+                    @if ($errors->has('delivery_time'))
                     <div class="invalid-feedback">
-                        {{ $errors->first('phone') }}
+                        {{ $errors->first('delivery_time') }}
                     </div>
                     @endif
                 </div>
             </div>
+            <div class="border rounded p-3 pt-2 ms-4" style="flex: 1;">
 
-            <div class="form-floating my-3">
-                <input class="form-control {{ $errors->has('address') ? 'is-invalid' : '' }}" type="text" value="{{ old('address') }}" name="address" id="address">
-                <label class="form-label" for="address">Client Address:</label>
-                @if ($errors->has('address'))
-                <div class="invalid-feedback">
-                    {{ $errors->first('address') }}
+                <p>Items Added</p>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </thead>
+                        <tbody>
+                            @php($stage = Session::get('orderStage') ?? [])
+                            @foreach ($products as $product)
+                            @php($quantity = $stage[$product->id] ?? 0)
+                            @if($quantity > 0)
+                            <tr>
+                                <td>{{ $product->name }}</td>
+                                <td>{{ $product->price }}</td>
+                                <td>x{{ $quantity }}</td>
+                                <td>{{ $product->price * $quantity }} PHP</td>
+                            </tr>
+                            @endif
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                @endif
-            </div>
-
-            <div class="form-floating">
-                <input class="form-control {{ $errors->has('delivery_time') ? 'is-invalid' : '' }}" type="datetime-local" value="{{ old('delivery_time') }}" name="delivery_time" id="time">
-                <label for="time">Delivery Time (Deadline): </label>
-                @if ($errors->has('delivery_time'))
-                <div class="invalid-feedback">
-                    {{ $errors->first('delivery_time') }}
-                </div>
-                @endif
             </div>
         </div>
 
