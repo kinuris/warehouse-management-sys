@@ -20,7 +20,7 @@
             <tbody>
                 @foreach($orderItems as [$item, $quantity])
                 <tr>
-                    <td>{{ $item->id }}</td>
+                    <td>{{ $item->internal_id }}</td>
                     <td>{{ $item->name }}</td>
                     <td>{{ $quantity }}</td>
                     <td>{{ $item->price }} PHP</td>
