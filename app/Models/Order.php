@@ -92,6 +92,21 @@ class Order extends Model
             ->get();
     }
 
+    public static function profit($orders) {
+        $total = 0;
+        foreach ($orders as $order) {
+            $items = $order->getItemsAndQuantity();
+
+            foreach ($items as [$item, $qty]) {
+                $item = Product::find($item);
+
+                $total += $item->overhead->profit * $qty;
+            }
+        }
+
+        return $total;
+    }
+
     public static function total($orders)
     {
         $total = 0;

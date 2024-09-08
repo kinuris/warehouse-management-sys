@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DeliveryRecordController;
 use App\Http\Controllers\EmployeeAttendanceController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\IncomingDeliveryController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
@@ -111,6 +112,28 @@ Route::controller(OrderController::class)->group(function () {
     Route::get('/delivery/proof/{order}', 'deliveryProof')
         ->middleware('auth')
         ->name('delivery_proof');
+});
+
+Route::controller(IncomingDeliveryController::class)->group(function() {
+    Route::get('/incoming', 'index')
+        ->name('incoming')
+        ->can('viewAny', User::class);
+
+    Route::get('/incoming/add', 'create')
+        ->name('incoming_add')
+        ->can('create', User::class);
+
+    Route::post('/incoming/add', 'store')
+        ->name('incoming_store')
+        ->can('create', User::class);
+    
+    Route::get('/incoming/deliver/{delivery}', 'success')
+        ->name('incoming_deliver')
+        ->can('update', User::class);
+
+    Route::get('/incoming/cancel/{delivery}', 'cancel')
+        ->name('incoming_cancel')
+        ->can('update', User::class);
 });
 
 Route::controller(EmployeeAttendanceController::class)->group(function () {

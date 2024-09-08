@@ -14,8 +14,20 @@ class Product extends Model
         'name',
         'stock_qty',
         'is_suspended',
-        'price',
+        'category_id',
     ];
+
+    public function category() {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function overhead() {
+        return $this->hasOne(ItemOverhead::class, 'product_id');
+    }
+
+    public function getPriceAttribute() {
+        return $this->overhead->base + $this->overhead->profit; 
+    }
 
     public static function create($fields = []): Product
     {

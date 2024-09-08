@@ -49,17 +49,22 @@
                         <li class="nav-item">
                             <a href="{{ route('deliveries') }}" class="nav-link">Pending Deliveries</a>
                         </li>
+
                         <li class="nav-item">
                             <a href="{{ route('deliveries_success') }}" class="nav-link">Successful Deliveries</a>
                         </li>
                         @elseif($user && $user->isSysRole('manager'))
                         <li class="nav-item">
-                            <a href="{{ route('orders') }}" class="nav-link">Order Management</a>
+                            <a href="{{ route('incoming') }}" class="nav-link">Incoming Orders</a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('employee_attendance') }}" class="nav-link">Employee Attendance Tracking</a>
+                            <a href="{{ route('orders') }}" class="nav-link">Order Management</a>
                         </li>
+
+                        <!-- <li class="nav-item">
+                            <a href="{{ route('employee_attendance') }}" class="nav-link">Employee Attendance Tracking</a>
+                        </li> -->
 
                         <li class="nav-item">
                             <a href="{{ route('inventory') }}" class="nav-link">Inventory Managment</a>
@@ -69,6 +74,14 @@
                             <a href="{{ route('reports') }}" class="nav-link">Report Generation</a>
                         </li>
                         @elseif ($user && $user->isSysRole('admin'))
+                        <li class="nav-item">
+                            <a href="{{ route('incoming') }}" class="nav-link">Incoming Orders</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('inventory') }}" class="nav-link">Inventory Managment</a>
+                        </li>
+
                         <li class="nav-item">
                             <a href="{{ route('warehouse') }}" class="nav-link">Warehouse Management</a>
                         </li>

@@ -40,7 +40,7 @@
                 ?>
             ],
             datasets: [{
-                label: 'Total Sales in PHP',
+                label: 'Revenue in PHP',
                 data: [
                     <?php
                     echo Order::total($records[0]) . ',';
@@ -53,6 +53,32 @@
                     ?>
                 ],
                 borderWidth: 1
+            }, {
+                label: 'Profit in PHP',
+                data: [
+                    <?php
+                    echo Order::profit($records[0]) . ',';
+                    echo "\n";
+
+                    foreach (array_slice($records, 1) as $record) {
+                        echo Order::profit($record) . ',';
+                        echo "\n";
+                    }
+                    ?>
+                ]
+            }, {
+                label: 'Taxes in PHP',
+                data: [
+                    <?php
+                    echo number_format(Order::profit($records[0]) * 0.12, 2) . ',';
+                    echo "\n";
+
+                    foreach (array_slice($records, 1) as $record) {
+                        echo number_format(Order::profit($record) * 0.12, 2) . ',';
+                        echo "\n";
+                    }
+                    ?>
+                ]
             }]
         },
         options: {
@@ -61,6 +87,10 @@
             scales: {
                 y: {
                     beginAtZero: true,
+                    stacked: true,
+                },
+                x: {
+                    stacked: true,
                 }
             }
         }

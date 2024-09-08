@@ -5,15 +5,36 @@
     <h1>Edit Item</h1>
     <form action="{{ route('inventory_update', ['inventory' => $inventory->id]) }}" method="POST">
         @csrf
-        <div class="form-floating">
-            <input class="form-control" value="{{ $inventory->name }}" id="name" name="name" type="text">
-            <label class="form-label" for="name">Product name</label>
+        <div class="d-flex">
+            <div class="form-floating" style="flex: 1">
+                <input class="form-control" value="{{ $inventory->name }}" id="name" name="name" type="text">
+                <label class="form-label" for="name">Product name</label>
+            </div>
+            <div class="mx-2"></div>
+            <div class="form-floating" style="flex: 1">
+                <select class="form-select" name="category" id="category">
+                    @foreach (App\Models\Category::all() as $category)
+                    <option value="{{ $category->id }}" {{ $inventory->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                    @endforeach
+                </select>
+                <label for="category">Category</label>
+            </div>
         </div>
 
         <div class="d-flex my-3">
             <div class="form-floating" style="flex: 1">
-                <input class="form-control" value="{{ $inventory->price }}" id="price" name="price" step="0.01" type="number">
+                <input readonly disabled class="form-control" value="{{ $inventory->price }}" id="price" name="price" step="0.01" type="number">
                 <label class="form-label" for="price">Price</label>
+            </div>
+            <div class="mx-2"></div>
+            <div class="form-floating">
+                <input class="form-control" value="{{ $inventory->overhead->base }}" id="base" name="base" step="0.01" type="number">
+                <label for="base">Base Price</label>
+            </div>
+            <div class="mx-2"></div>
+            <div class="form-floating">
+                <input class="form-control" value="{{ $inventory->overhead->profit }}" id="profit" name="profit" step="0.01" type="number">
+                <label for="profit">Profit</label>
             </div>
             <div class="mx-2"></div>
             <div class="form-floating" style="flex: 1">

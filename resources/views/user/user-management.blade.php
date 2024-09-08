@@ -11,7 +11,7 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
-                <th>Status (Today)</th>
+                <!-- <th>Status (Today)</th> -->
                 <th>Actions</th>
             </thead>
             <tbody>
@@ -21,7 +21,7 @@
                     <td class="{{ $user->is_suspended ? 'text-danger text-decoration-line-through' : '' }}">{{ $user->getFullname() }}</td>
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->phone }}</td>
-                    @php($recent = $user->mostRecentAttendance())
+                    {{-- @php($recent = $user->mostRecentAttendance())
                     @if(!$recent)
                     <td class="text-muted">(No Records) <span class="text-danger">No Sign-in</span></td>
                     @elseif($recent->getStatusType() === 'present')
@@ -32,10 +32,10 @@
                     <td class="text-primary">Finished</td>
                     @else
                     <td class="text-danger">No Sign-in</td>
-                    @endif
+                    @endif --}}
                     <td>
                         <div class="btn-group">
-                            <a href="{{ route('users_attendance', ['user' => $user->id]) }}" class="btn btn-primary">Attendance</a>
+                            <!-- <a href="{{ route('users_attendance', ['user' => $user->id]) }}" class="btn btn-primary">Attendance</a> -->
                             <a href="{{ route('users_edit', ['user' => $user->id]) }}" class="btn btn-success">Edit</a>
                             @if ($user->is_suspended)
                             <a href="{{ route('users_delete', ['user' => $user->id]) }}" class="btn btn-info">Allow</a>

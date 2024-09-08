@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ItemOverhead;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -30,14 +31,17 @@ class InventoryController extends Controller
         return view('inventory.inventory-edit')->with('inventory', $inventory);
     }
 
-    public function update(Request $request, Product $inventory) {
+    public function update(Request $request, Product $inventory)
+    {
         $validated = $request->validate([
             'name' => ['required'],
-            'price' => ['required'],
+            'base' => ['required'],
+            'profit' => ['required'],
             'stock_qty' => ['required']
         ]);
 
         $inventory->update($validated);
+        $inventory->overhead->update($validated);
 
         return redirect()->route('inventory')->with('message', 'Inventory item updated successfully!');
     }
@@ -46,11 +50,20 @@ class InventoryController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'unique:products'],
-            'price' => ['required'],
-            'stock_qty' => ['required']
+            'base' => ['required'],
+            'profit' => ['required'],
+            'stock_qty' => ['required'],
+            'category' => ['required']
         ]);
 
-        Product::create($validated);
+        $validated['category_id'] = $validated['category'];
+
+        $item = Product::create($validated);
+        ItemOverhead::query()->create([
+            'product_id' => $item->id,
+            'base' => $validated['base'],
+            'profit' => $validated['profit'],
+        ]);
 
         return redirect('/inventory')->with('message', 'Inventory item added successfully!');
     }
