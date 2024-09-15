@@ -21,7 +21,9 @@
                     <td>{{ $order->id }}</td>
                     <td>{{ $order->client_name }} / {{ $order->client_phone }}</td>
                     <td>{{ $order->address }}</td>
-                    @if ($order->isLateNotDelivered())
+                    @if ($order->isWalkIn())
+                    <td class="text-success"><b>Walk-in</b></td>
+                    @elseif ($order->isLateNotDelivered())
                     <td class="text-warning"><b>Late (Not Delivered)</b></td>
                     @elseif ($order->isLateDelivered())
                     <td class="text-warning"><b>Late (Delivered)</b></td>

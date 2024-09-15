@@ -27,7 +27,7 @@
                     <td>-</td>
                 </tr>
                 @else
-                @foreach($pending as $order)
+                @foreach(array_filter($pending, fn($order) => !$order->isWalkIn()) as $order)
                 <tr>
                     <td>{{ $order->id }}</td>
                     <td>{{ $order->client_name }} / {{ $order->client_phone }}</td>

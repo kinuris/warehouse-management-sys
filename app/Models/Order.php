@@ -20,6 +20,10 @@ class Order extends Model
         'is_cancelled',
     ];
 
+    public function isWalkIn() {
+        return $this->address === '(Walk-in Order)';
+    }
+
     public function getItemsAndQuantity()
     {
         $orderItems = OrderItem::query()

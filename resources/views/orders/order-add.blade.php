@@ -7,7 +7,11 @@
         @csrf
         <div class="d-flex">
             <div class="border rounded p-3 pt-2" style="flex: 2;">
-                <p>Client Selection</p>
+                <div class="d-flex mb-2" style="place-items: center;">
+                    <p class="m-0">Client Selection</p>
+                    <input class="ms-3 me-1" type="checkbox" name="walk_in" id="walk-in">
+                    <label for="walk-in">Walk-in Order?</label>
+                </div>
                 <div class="d-flex">
                     <div class="form-floating" style="flex: 1">
                         <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="text" value="{{ old('name') }}" name="name" id="name">
@@ -124,4 +128,17 @@
             </div>
     </form>
 </div>
+@endsection
+
+@section('script')
+<script>
+    const delivery = document.getElementById('time')
+    const address = document.getElementById('address')
+    const walkInChk = document.getElementById('walk-in')
+
+    walkInChk.addEventListener('change', function() {
+        delivery.disabled = this.checked
+        address.disabled = this.checked
+    })
+</script>
 @endsection

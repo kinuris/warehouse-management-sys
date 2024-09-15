@@ -56,12 +56,19 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        $walkIn = $request->has('walk_in');
+
         $validated = $request->validate([
             'name' => ['required'],
             'phone' => ['required', 'min:11', 'max:11'],
-            'address' => ['required'],
-            'delivery_time' => ['required', 'date', 'after:now'],
+            'address' => ['nullable'],
+            'delivery_time' => ['nullable', 'date', 'after:now'],
         ]);
+
+        if ($walkIn) {
+            $validated['address'] = '(Walk-in Order)';
+            $validated['delivery_time'] = date_create()->format('Y-m-d\TH:i');
+        }
 
         $validated['client_name'] = $validated['name'];
         $validated['client_phone'] = $validated['phone'];
@@ -87,6 +94,10 @@ class OrderController extends Controller
         }
 
         Session::put('orderStage', []);
+
+        if ($walkIn) {
+            
+        }
 
         return redirect()->route('orders')->with('message', 'Order created successfully');
     }
@@ -169,7 +180,8 @@ class OrderController extends Controller
             ->with('success', $success);
     }
 
-    public function deliveryProof(Order $order) {
+    public function deliveryProof(Order $order)
+    {
         if (!$order->isDelivered()) {
             return redirect()->route('deliveries')->with('message', 'Order not delivered');
         }
@@ -195,7 +207,8 @@ class OrderController extends Controller
         //
     }
 
-    public function delete(Order $order) {
+    public function delete(Order $order)
+    {
         return view('orders.order-delete')->with('order', $order);
     }
 
@@ -204,9 +217,9 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-       $order->update(['is_cancelled' => true]); 
+        $order->update(['is_cancelled' => true]);
 
-       return redirect()->route('orders')->with('message', 'Order cancelled successfully');
+        return redirect()->route('orders')->with('message', 'Order cancelled successfully');
     }
 
     public function stageAdd(Request $request, Product $product)

@@ -27,7 +27,7 @@
         <div class="d-flex my-3">
             <div class="form-floating">
                 <input class="form-control @error('price') is-invalid @enderror" id="base" name="base" step="0.01" type="number" value="{{ old('base') }}">
-                <label class="form-label" for="base">Base Price</label>
+                <label class="form-label" for="base">Base Price (In PHP)</label>
                 @error('base')
                 <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -35,7 +35,7 @@
             <div class="mx-2"></div>
             <div class="form-floating">
                 <input class="form-control @error('price') is-invalid @enderror" id="profit" name="profit" step="0.01" type="number" value="{{ old('profit') }}">
-                <label class="form-label" for="profit">Profit</label>
+                <label class="form-label" for="profit">Profit (In PHP)</label>
                 @error('profit')
                 <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
