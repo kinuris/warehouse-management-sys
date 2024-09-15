@@ -111,6 +111,10 @@ Route::controller(OrderController::class)->group(function () {
     Route::get('/delivery/proof/{order}', 'deliveryProof')
         ->middleware('auth')
         ->name('delivery_proof');
+    
+    Route::get('/order/receipt/gen/{order}', 'receiptGen')
+        ->name('order_receipt')
+        ->can('update', User::class);
 });
 
 Route::controller(IncomingDeliveryController::class)->group(function() {

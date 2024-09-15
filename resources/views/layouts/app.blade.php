@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="{{ asset('assets/css/filepond.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/choices.min.css') }}">
+    <link rel="stylesheet" href=" https://printjs-4de6.kxcdn.com/print.min.css">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -135,6 +136,7 @@
             @yield('content')
         </main>
     </div>
+    <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
     <script src="{{ asset('assets/js/filepond.js') }}"></script>
     <script src="{{ asset('assets/js/choices.min.js') }}"></script>
     <script src="{{ asset('assets/js/fullcalendar.min.js') }}"></script>

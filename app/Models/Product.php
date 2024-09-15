@@ -17,16 +17,27 @@ class Product extends Model
         'category_id',
     ];
 
-    public function category() {
+    public function shrtName($length = 5)
+    {
+        $vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];
+        $shortened = str_replace($vowels, '', $this->name);
+
+        return substr($shortened, 0, $length);
+    }
+
+    public function category()
+    {
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function overhead() {
+    public function overhead()
+    {
         return $this->hasOne(ItemOverhead::class, 'product_id');
     }
 
-    public function getPriceAttribute() {
-        return $this->overhead->base + $this->overhead->profit; 
+    public function getPriceAttribute()
+    {
+        return $this->overhead->base + $this->overhead->profit;
     }
 
     public static function create($fields = []): Product

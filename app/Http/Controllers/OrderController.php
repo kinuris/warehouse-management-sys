@@ -271,4 +271,8 @@ class OrderController extends Controller
 
         return back()->withInput();
     }
+
+    public function receiptGen(Order $order) {
+        return view('orders.receipt-gen')->with('order', $order);
+    }
 }

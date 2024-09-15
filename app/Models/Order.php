@@ -20,7 +20,8 @@ class Order extends Model
         'is_cancelled',
     ];
 
-    public function isWalkIn() {
+    public function isWalkIn()
+    {
         return $this->address === '(Walk-in Order)';
     }
 
@@ -72,6 +73,19 @@ class Order extends Model
         return !$exists && new DateTime($this->delivery_time) > date_create('now');
     }
 
+    public function getTotal()
+    {
+        $total = 0;
+        foreach ($this->getItemsAndQuantity() as [$id, $qty]) {
+            $total += Product::query()
+                ->where('id', '=', $id)
+                ->first()
+                ->price * $qty;
+        }
+
+        return $total;
+    }
+
     public static function pastDay(int $dayOffset = 0)
     {
         // $upper = date_create('now')->sub(new DateInterval('P' . $dayOffset . 'D'))->format('Y-m-d');
@@ -96,7 +110,8 @@ class Order extends Model
             ->get();
     }
 
-    public static function profit($orders) {
+    public static function profit($orders)
+    {
         $total = 0;
         foreach ($orders as $order) {
             $items = $order->getItemsAndQuantity();
@@ -162,5 +177,12 @@ class Order extends Model
         $failed = self::where('is_cancelled', '=', '0')->get();
 
         return $failed;
+    }
+
+    public function casts()
+    {
+        return [
+            'delivery_time' => 'datetime'
+        ];
     }
 }
