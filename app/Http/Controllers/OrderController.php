@@ -58,12 +58,21 @@ class OrderController extends Controller
     {
         $walkIn = $request->has('walk_in');
 
-        $validated = $request->validate([
-            'name' => ['required'],
-            'phone' => ['required', 'min:11', 'max:11'],
-            'address' => ['nullable'],
-            'delivery_time' => ['nullable', 'date', 'after:now'],
-        ]);
+        if ($walkIn) {
+            $validated = $request->validate([
+                'name' => ['required'],
+                'phone' => ['required', 'min:11', 'max:11'],
+                'address' => ['nullable'],
+                'delivery_time' => ['nullable', 'date', 'after:now'],
+            ]);
+        } else {
+            $validated = $request->validate([
+                'name' => ['required'],
+                'phone' => ['required', 'min:11', 'max:11'],
+                'address' => ['required'],
+                'delivery_time' => ['required', 'date', 'after:now']
+            ]);
+        }
 
         if ($walkIn) {
             $validated['address'] = '(Walk-in Order)';
@@ -96,7 +105,6 @@ class OrderController extends Controller
         Session::put('orderStage', []);
 
         if ($walkIn) {
-            
         }
 
         return redirect()->route('orders')->with('message', 'Order created successfully');
@@ -272,7 +280,8 @@ class OrderController extends Controller
         return back()->withInput();
     }
 
-    public function receiptGen(Order $order) {
+    public function receiptGen(Order $order)
+    {
         return view('orders.receipt-gen')->with('order', $order);
     }
 }
