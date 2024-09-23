@@ -88,6 +88,24 @@
 
         <div class="border rounded p-3 pt-2">
             <p>Product Selection (Total: {{ $totalPrice }} PHP)</p>
+            <div class="d-flex">
+                <div class="form-floating">
+                    <input value="{{ request()->query('search') }}" class="form-control" type="text" name="search" id="search">
+                    <label class="form-label" for="search">Search</label>
+                </div>
+
+                <div class="form-floating mx-2">
+                    <select class="form-select" name="category" id="category">
+                        <option value="-1">All Categories</option>
+                        @foreach (App\Models\Category::all() as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                    <label class="form-label" for="category">Category Filter</label>
+                </div>
+
+                <button class="btn btn-primary" type="button" id="filter-btn">Filter</button>
+            </div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -131,6 +149,15 @@
 @endsection
 
 @section('script')
+<script>
+    const search = document.getElementById('search')
+    const category = document.getElementById('category')
+    const filterBtn = document.getElementById('filter-btn')
+
+    filterBtn.addEventListener('click', function() {
+        window.location.href = "{{ route('order_add') }}?search=" + encodeURI(search.value) + '&category=' + encodeURI(category.value)
+    });
+</script>
 <script>
     const delivery = document.getElementById('time')
     const address = document.getElementById('address')

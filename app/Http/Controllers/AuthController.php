@@ -6,6 +6,7 @@ use App\Models\EmployeeRole;
 use App\Models\SystemRole;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -16,7 +17,7 @@ class AuthController extends Controller
 
     public function userLogin(Request $request)
     {
-        $auth = auth()->attempt($request->only('email', 'password'));
+        $auth = Auth::attempt($request->only('email', 'password'));
 
         if ($auth) {
             return redirect('/');
@@ -56,7 +57,7 @@ class AuthController extends Controller
     }
 
     public function logout() {
-        auth()->logout();
+        Auth::logout();
 
         return redirect('/login');
     }

@@ -30,9 +30,14 @@ class OrderController extends Controller
         $search = $request->query('search');
 
         if (!$search) {
-            $products = Product::all();
+            $products = Product::query();
         } else {
-            $products = Product::where('name', 'like', '%' . $search . '%')->get();
+            $products = Product::where('name', 'like', '%' . $search . '%');
+        }
+
+        $category = $request->query('category', -1);
+        if ($category && (int) $category !== -1) {
+            $products = $products->where('category_id', $category);
         }
 
         $totalPrice = 0;
@@ -47,7 +52,7 @@ class OrderController extends Controller
         }
 
         return view('orders.order-add')
-            ->with('products', $products)
+            ->with('products', $products->get())
             ->with('totalPrice', $totalPrice);
     }
 
