@@ -41,6 +41,8 @@ class InventoryController extends Controller
         ]);
 
         $inventory->update($validated);
+
+        $validated['profit'] = (int) $validated['profit'] - (int) $validated['base'];
         $inventory->overhead->update($validated);
 
         return redirect()->route('inventory')->with('message', 'Inventory item updated successfully!');
@@ -62,7 +64,7 @@ class InventoryController extends Controller
         ItemOverhead::query()->create([
             'product_id' => $item->id,
             'base' => $validated['base'],
-            'profit' => $validated['profit'],
+            'profit' => (int) $validated['profit'] - (int) $validated['base'],
         ]);
 
         return redirect('/inventory')->with('message', 'Inventory item added successfully!');

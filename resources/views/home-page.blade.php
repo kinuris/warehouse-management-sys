@@ -3,7 +3,16 @@
 @section('content')
 <div class="container">
     <h1>Analytics & Reports</h1>
-    <div class="d-flex justify-content-evenly">
+    <form action="">
+        <div class="d-flex mt-4" style="place-items: center;"> 
+            <button class="btn btn-primary">Generate Report</button>
+            <p class="m-0 ms-2 me-1">From: </p>
+            <input class="form-control" style="max-width: fit-content;" type="date" name="start" id="start">
+            <p class="m-0 ms-2 me-1">To: </p>
+            <input class="form-control" style="max-width: fit-content;" type="date" name="end" id="start">
+        </div>
+    </form>
+    <div class="d-flex justify-content-evenly mt-4">
         <canvas style="max-width: calc(50vw - 48px); max-height: calc(33vw - 48px); min-width: calc(50vw - 48px); min-height: calc(33vw - 48px);" id="week"></canvas>
         <canvas style="max-width: calc(50vw - 48px); max-height: calc(33vw - 48px); min-width: calc(50vw - 48px); min-height: calc(33vw - 48px);" id="product"></canvas>
     </div>

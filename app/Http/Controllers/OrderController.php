@@ -37,7 +37,7 @@ class OrderController extends Controller
 
         $category = $request->query('category', -1);
         if ($category && (int) $category !== -1) {
-            $products = $products->where('category_id', $category);
+            $products = $products->where('category_id', '=', $category);
         }
 
         $totalPrice = 0;

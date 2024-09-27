@@ -2,8 +2,8 @@
 
 @section('content')
 <div class="container">
-    <h1>Order Management</h1>
-    <a href="{{ route('order_add') }}" class="btn btn-primary mt-3">Issue Order</a>
+    <h1>Sales Management</h1>
+    <a href="{{ route('order_add') }}" class="btn btn-primary mt-3">Issue Sale</a>
 
     <div class="table-responsive">
         <table class="table">

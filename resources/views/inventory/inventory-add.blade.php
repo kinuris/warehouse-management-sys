@@ -35,7 +35,7 @@
             <div class="mx-2"></div>
             <div class="form-floating">
                 <input class="form-control @error('price') is-invalid @enderror" id="profit" name="profit" step="0.01" type="number" value="{{ old('profit') }}">
-                <label class="form-label" for="profit">Profit (In PHP)</label>
+                <label class="form-label" for="profit">Selling Price (In PHP)</label>
                 @error('profit')
                 <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

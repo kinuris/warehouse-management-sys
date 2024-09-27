@@ -55,12 +55,12 @@
                             <a href="{{ route('deliveries_success') }}" class="nav-link">Successful Deliveries</a>
                         </li>
                         @elseif($user && $user->isSysRole('manager'))
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="{{ route('incoming') }}" class="nav-link">Incoming Orders</a>
-                        </li>
+                        </li> -->
 
                         <li class="nav-item">
-                            <a href="{{ route('orders') }}" class="nav-link">Order Management</a>
+                            <a href="{{ route('orders') }}" class="nav-link">Sales Management</a>
                         </li>
 
                         <!-- <li class="nav-item">
@@ -68,7 +68,7 @@
                         </li> -->
 
                         <li class="nav-item">
-                            <a href="{{ route('inventory') }}" class="nav-link">Inventory Managment</a>
+                            <a href="{{ route('inventory') }}" class="nav-link">Inventory Management</a>
                         </li>
 
                         <li class="nav-item">

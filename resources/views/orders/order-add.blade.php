@@ -56,7 +56,7 @@
             </div>
             <div class="border rounded p-3 pt-2 ms-4" style="flex: 1;">
 
-                <p>Items Added</p>
+                <p>Items Added (Total: {{ $totalPrice }} PHP)</p>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -159,13 +159,35 @@
     });
 </script>
 <script>
+    const params = new URLSearchParams(window.location.search)
+
     const delivery = document.getElementById('time')
     const address = document.getElementById('address')
     const walkInChk = document.getElementById('walk-in')
 
+    if (params.has('walkin')) {
+        walkInChk.checked = true
+        delivery.disabled = true
+        address.disabled = true
+    }
+
     walkInChk.addEventListener('change', function() {
         delivery.disabled = this.checked
         address.disabled = this.checked
+
+        if (this.checked) {
+            if (!params.has('walkin')) {
+                params.append('walkin', true)
+            }
+
+            window.location.href = "{{ route('order_add') }}" + '?' + params.toString()
+        } else {
+            if (params.has('walkin')) {
+                params.delete('walkin')
+            }
+
+            window.location.href = "{{ route('order_add') }}" + '?' + params.toString()
+        }
     })
 </script>
 @endsection

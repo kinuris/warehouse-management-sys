@@ -23,18 +23,18 @@
 
         <div class="d-flex my-3">
             <div class="form-floating" style="flex: 1">
-                <input readonly disabled class="form-control" value="{{ $inventory->price }}" id="price" name="price" step="0.01" type="number">
-                <label class="form-label" for="price">Price</label>
+                <input readonly disabled class="form-control" value="{{ $inventory->overhead->profit }}" id="price" name="price" step="0.01" type="number">
+                <label class="form-label" for="price">Profit (In PHP)</label>
             </div>
             <div class="mx-2"></div>
             <div class="form-floating">
                 <input class="form-control" value="{{ $inventory->overhead->base }}" id="base" name="base" step="0.01" type="number">
-                <label for="base">Base Price</label>
+                <label for="base">Base Price (In PHP)</label>
             </div>
             <div class="mx-2"></div>
             <div class="form-floating">
-                <input class="form-control" value="{{ $inventory->overhead->profit }}" id="profit" name="profit" step="0.01" type="number">
-                <label for="profit">Profit</label>
+                <input class="form-control" value="{{ number_format($inventory->price, 2) }}" id="profit" name="profit" step="0.01" type="number">
+                <label for="profit">Selling Price (In PHP)</label>
             </div>
             <div class="mx-2"></div>
             <div class="form-floating" style="flex: 1">

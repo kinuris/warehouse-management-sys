@@ -73,6 +73,23 @@ class Order extends Model
         return !$exists && new DateTime($this->delivery_time) > date_create('now');
     }
 
+    public function getProfit()
+    {
+        $profit = 0;
+        foreach ($this->getItemsAndQuantity() as [$id, $qty]) {
+            $profit += Product::query()
+                ->where('id', '=', $id)
+                ->first()
+                ->overhead->profit * $qty;
+        }
+
+        return $profit;
+    }
+
+    public function getTax() {
+        return $this->getProfit() * 0.12;
+    }
+
     public function getTotal()
     {
         $total = 0;

@@ -19,7 +19,6 @@
         <div class="d-flex p-3 flex-column rounded mt-3" style="background-color: white; width: 100%; height: fit-content;">
             <div class="d-flex justify-content-between" style="place-items: center;">
                 <p>DATE: {{ $order->created_at->format('M. d, Y H:m') }}</p>
-                <p>TOTAL: {{ $order->getTotal() }} PHP</p>
             </div>
 
             <table>
@@ -42,7 +41,9 @@
                 </tbody>
             </table>
 
-            <p class="m-0 mt-4" style="font-size: 12px; color: gray;">Sobida WMS {{ $order->isWalkIn() ? '(WALK-IN ORDER)' : '(DELIVERED BY:' }} {{ $order->delivery_time->format('M. d, Y H:m') }})</p>
+            <p class="m-0 mt-2">TOTAL: {{ $order->getTotal() }} PHP</p>
+            <p class="m-0">TAX: {{ $order->getTax() }} PHP</p>
+            <p class="m-0" style="font-size: 12px; color: gray;">Sobida WMS {{ $order->isWalkIn() ? '(WALK-IN ORDER)' : '(DELIVERED BY:' }} {{ $order->delivery_time->format('M. d, Y H:m') }})</p>
         </div>
 
 
