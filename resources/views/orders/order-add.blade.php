@@ -54,7 +54,7 @@
                     @endif
                 </div>
             </div>
-            <div class="border rounded p-3 pt-2 ms-4" style="flex: 1;">
+            <div class="border rounded p-3 pt-2 ms-4" style="flex: 2;">
 
                 <p>Items Added (Total: {{ $totalPrice }} PHP)</p>
                 <div class="table-responsive">
@@ -64,17 +64,39 @@
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Total</th>
+                            <th>Action</th>
                         </thead>
                         <tbody>
                             @php($stage = Session::get('orderStage') ?? [])
-                            @foreach ($products as $product)
+                            @foreach (App\Models\Product::all() as $product)
                             @php($quantity = $stage[$product->id] ?? 0)
                             @if($quantity > 0)
                             <tr>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->price }}</td>
-                                <td>x{{ $quantity }}</td>
-                                <td>{{ $product->price * $quantity }} PHP</td>
+                                @if ($product->stock_qty - $quantity < 0)
+                                    <td class="text-danger">x{{ $quantity }}</td>
+                                    @else
+                                    <td>x{{ $quantity }}</td>
+                                    @endif
+                                    <td>{{ $product->price * $quantity }} PHP</td>
+                                    <td class="d-flex">
+                                        <form method="POST">
+                                            @csrf
+                                            <input type="hidden" name="quantity" value="1">
+                                            <div class="btn-group">
+                                                <button type="submit" formaction="{{ route('order_stage_add', ['product' => $product->id]) }}" class="btn btn-primary">+</button>
+                                                <button type="submit" formaction="{{ route('order_stage_sub', ['product' => $product->id]) }}" class="btn btn-secondary">-</button>
+                                            </div>
+                                        </form>
+                                        <form class="ms-2" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="quantity" value="{{ $quantity }}">
+                                            <button type="submit" formaction="{{ route('order_stage_sub', ['product' => $product->id]) }}" class="btn btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
                             </tr>
                             @endif
                             @endforeach
@@ -98,7 +120,7 @@
                     <select class="form-select" name="category" id="category">
                         <option value="-1">All Categories</option>
                         @foreach (App\Models\Category::all() as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        <option {{ request()->query('category') == $category->id ? 'selected' : '' }} value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
                     <label class="form-label" for="category">Category Filter</label>
@@ -129,16 +151,20 @@
                             <td>{{ $product->internal_id }}</td>
                             <td>{{ $product->name }}</td>
                             <td>{{ $product->price }} PHP</td>
-                            <td>{{ $product->stock_qty }}<b class="text-danger" style="font-size: 12px;">{{ isset($stage[$product->id]) ? ' - ' . $stage[$product->id] : '' }}</b></td>
-                            <td>
-                                <div class="d-flex">
-                                    <div class="btn-group mx-2">
-                                        <button type="submit" formaction="{{ route('order_stage_add', ['product' => $product->id]) }}" class="btn btn-primary">Add</button>
-                                        <button type="submit" formaction="{{ route('order_stage_sub', ['product' => $product->id]) }}" class="btn btn-danger">Sub</button>
+                            @if ($product->stock_qty - $quantity < 0)
+                                <td class="text-danger">{{ $product->stock_qty }}<b class="text-danger" style="font-size: 12px;">{{ isset($stage[$product->id]) ? ' - ' . $stage[$product->id] : '' }}</b></td>
+                                @else
+                                <td>{{ $product->stock_qty }}<b class="text-danger" style="font-size: 12px;">{{ isset($stage[$product->id]) ? ' - ' . $stage[$product->id] : '' }}</b></td>
+                                @endif
+                                <td>
+                                    <div class="d-flex">
+                                        <div class="btn-group mx-2">
+                                            <button type="submit" formaction="{{ route('order_stage_add', ['product' => $product->id]) }}" class="btn btn-primary">Add</button>
+                                            <button type="submit" formaction="{{ route('order_stage_sub', ['product' => $product->id]) }}" class="btn btn-danger">Sub</button>
+                                        </div>
+                                        <p class="text-secondary">x{{ $quantity }} ({{ $quantity * $product->price }} PHP)</p>
                                     </div>
-                                    <p class="text-secondary">x{{ $quantity }} ({{ $quantity * $product->price }} PHP)</p>
-                                </div>
-                            </td>
+                                </td>
                         </tr>
                         @endforeach
                     </tbody>

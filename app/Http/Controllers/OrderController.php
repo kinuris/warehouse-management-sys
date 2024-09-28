@@ -93,8 +93,14 @@ class OrderController extends Controller
             return back()->withInput()->with('message', 'No product added to order');
         }
 
-        $order = Order::query()->create($validated);
+        foreach ($stage as $id => $quantity) {
+            $product = Product::find($id);
+            if ($product->stock_qty < $quantity) {
+                return back()->withInput()->with('message', 'Insufficient stock ' . $product->name . ': Required - ' . $quantity . ', Available - ' . $product->stock_qty);
+            }
+        }
 
+        $order = Order::query()->create($validated);
         foreach ($stage as $productId => $quantity) {
             $product = Product::find($productId);
 
