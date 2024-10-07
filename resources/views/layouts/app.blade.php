@@ -76,17 +76,17 @@
                             <a href="{{ route('reports') }}" class="nav-link">Report Generation</a>
                         </li>
                         @elseif ($user && $user->isSysRole('admin'))
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="{{ route('incoming') }}" class="nav-link">Incoming Orders</a>
-                        </li>
+                        </li> -->
 
                         <li class="nav-item">
-                            <a href="{{ route('inventory') }}" class="nav-link">Inventory Managment</a>
+                            <a href="{{ route('inventory') }}" class="nav-link">Inventory Management</a>
                         </li>
 
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="{{ route('warehouse') }}" class="nav-link">Warehouse Management</a>
-                        </li>
+                        </li> -->
 
                         <li class="nav-item">
                             <a href="{{ route('reports') }}" class="nav-link">Report Generation</a>
