@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/choices.min.css') }}">
     <link rel="stylesheet" href=" https://printjs-4de6.kxcdn.com/print.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -79,6 +79,10 @@
                         <!-- <li class="nav-item">
                             <a href="{{ route('incoming') }}" class="nav-link">Incoming Orders</a>
                         </li> -->
+
+                        <li class="nav-item">
+                            <a href="{{ route('orders') }}" class="nav-link">Sales Management</a>
+                        </li>
 
                         <li class="nav-item">
                             <a href="{{ route('inventory') }}" class="nav-link">Inventory Management</a>
