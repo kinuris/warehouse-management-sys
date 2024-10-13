@@ -2,8 +2,9 @@
 
 @section('content')
 <div class="container">
+    <img src="{{ asset('assets/gradient.jpg') }}" style="position: fixed; left: 0; z-index: -1; top: 0; width: 100%; height: 100vh; opacity: 0.2; object-fit: cover;" alt="Background">
     <h1>Sales Management</h1>
-    <a href="{{ route('order_add') }}" class="btn btn-primary mt-3">Issue Sale</a>
+    <a href="{{ route('order_add') }}" class="btn btn-primary my-3">Issue Sale</a>
 
     <div class="table-responsive">
         <table class="table">
@@ -39,7 +40,7 @@
                         <div class="btn-group">
                             <a class="btn btn-info" href="{{ route('item_view', ['order' => $order->id]) }}">View Items</a>
                             <a class="btn btn-primary" href="{{ route('order_receipt', ['order' => $order->id]) }}">Receipt</a>
-                            @if (!$order->isDelivered() && !$order->isFailed())
+                            @if (!$order->isDelivered() && !$order->isFailed() && !$order->isWalkIn())
                             <a class="btn btn-danger" href="{{ route('order_delete', ['order' => $order->id]) }}">Cancel</a>
                             @endif
                             @if ($order->isDelivered())

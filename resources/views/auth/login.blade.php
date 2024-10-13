@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div>
+    <img src="{{ asset('assets/login_bg.jpg') }}" style="z-index: -1; position: fixed; left: 0; top: 0; width: 100%; height: 100vh; opacity: 0.4; object-fit: cover;" alt="Background">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">

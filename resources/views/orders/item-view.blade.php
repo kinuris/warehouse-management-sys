@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container">
+    <img src="{{ asset('assets/gradient.jpg') }}" style="position: fixed; left: 0; z-index: -1; top: 0; width: 100%; height: 100vh; opacity: 0.2; object-fit: cover;" alt="Background">
     <h1 class="m-0">Order For: </h1>
     <h5 class="m-0 ms-1 text-secondary">{{ $order->client_name }} / {{ $order->client_phone }}</h5>
     <h5 class="ms-1 mb-3 text-secondary">Delivery: {{ $order->delivery_time }}</h5>

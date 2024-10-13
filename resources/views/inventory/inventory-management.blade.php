@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container" style="position: relative;">
+    <img src="{{ asset('assets/gradient.jpg') }}" style="position: fixed; left: 0; z-index: -1; top: 0; width: 100%; height: 100vh; opacity: 0.2; object-fit: cover;" alt="Background">
     <div class="d-lg-flex justify-content-between">
         <h1>Inventory Managment</h1>
         <form class="d-flex" action="{{ route('inventory') }}">
@@ -10,7 +11,7 @@
             <input type="submit" value="Filter" class="btn btn-primary ms-2">
         </form>
     </div>
-    <a href="{{ route('inventory_add') }}" class="btn btn-primary mt-3">
+    <a href="{{ route('inventory_add') }}" class="btn btn-primary my-3">
         Add Inventory Item
     </a>
     <div class="table-responsive">

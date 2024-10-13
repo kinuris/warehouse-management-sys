@@ -17,9 +17,9 @@ class Product extends Model
         'category_id',
     ];
 
-    public function shrtName($length = 5)
+    public function shrtName($length = 7)
     {
-        $vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];
+        $vowels = ['o', 'u', 'O', '(', ')', '-'];
         $shortened = str_replace($vowels, '', $this->name);
 
         return substr($shortened, 0, $length);

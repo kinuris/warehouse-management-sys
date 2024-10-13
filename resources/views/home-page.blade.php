@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="px-5" style="position: relative;">
+
+    <img src="{{ asset('assets/gradient.jpg') }}" style="position: absolute; left: 0; z-index: -1; top: -24px; width: 100%; height: calc(100vh - 58px); opacity: 0.2; object-fit: cover;" alt="Background">
     <h1>Analytics & Reports</h1>
     <form action="">
         <div class="d-flex mt-4" style="place-items: center;"> 

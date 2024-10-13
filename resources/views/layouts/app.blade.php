@@ -73,6 +73,10 @@
                         </li>
 
                         <li class="nav-item">
+                            <a href="{{ route('users') }}" class="nav-link">User Management</a>
+                        </li>
+
+                        <li class="nav-item">
                             <a href="{{ route('reports') }}" class="nav-link">Report Generation</a>
                         </li>
                         @elseif ($user && $user->isSysRole('admin'))
@@ -86,6 +90,10 @@
 
                         <li class="nav-item">
                             <a href="{{ route('inventory') }}" class="nav-link">Inventory Management</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('users') }}" class="nav-link">User Management</a>
                         </li>
 
                         <!-- <li class="nav-item">

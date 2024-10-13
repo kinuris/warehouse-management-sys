@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container">
+    <img src="{{ asset('assets/gradient.jpg') }}" style="position: fixed; left: 0; z-index: -1; top: 0; width: 100%; height: 100vh; opacity: 0.2; object-fit: cover;" alt="Background">
     <a class="btn btn-secondary" href="{{ route('orders') }}">Back</a>
     <button class="btn btn-primary" onclick="printJS({ printable: 'receipt', type: 'html', css: 'https\://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' })">Print</button>
 
@@ -86,16 +87,6 @@
             </div>
             <p class="m-0" style="font-size: 12px; color: gray;">Sobida WMS {{ $order->isWalkIn() ? '(WALK-IN ORDER)' : '(DELIVERED BY:' }} {{ $order->delivery_time->format('M. d, Y H:m') }})</p>
         </div>
-
-
-        <!-- <div class="d-flex p-3 flex-column rounded mt-3" style="background-color: white; width: 100%; height: fit-content;">
-            <h1 class="text-center m-0" style="font-size: 24px; font-weight: bold; text-decoration: underline;">Receiver:</h1>
-            <div class="d-flex flex-column mt-3 mx-auto" style="font-size: 16px;">
-                <p class="m-0">Name: <span style="text-decoration: underline;">{{ $order->client_name }}</span></p>
-                <p class="m-0">Address: <span style="text-decoration: underline;">{{ $order->address }}</span></p>
-                <p>Signature: _____________________</p>
-            </div>
-        </div> -->
     </div>
 </div>
 @endsection

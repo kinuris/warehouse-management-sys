@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container">
+    <img src="{{ asset('assets/gradient.jpg') }}" style="position: fixed; left: 0; z-index: -1; top: 0; width: 100%; height: 100vh; opacity: 0.2; object-fit: cover;" alt="Background">
     <h1>Edit Item</h1>
     <form action="{{ route('inventory_update', ['inventory' => $inventory->id]) }}" method="POST">
         @csrf
