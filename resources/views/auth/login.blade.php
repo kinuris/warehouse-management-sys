@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Login')
+
 @section('content')
 <div>
     <img src="{{ asset('assets/login_bg.jpg') }}" style="z-index: -1; position: fixed; left: 0; top: 0; width: 100%; height: 100vh; opacity: 0.4; object-fit: cover;" alt="Background">
