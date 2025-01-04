@@ -3,8 +3,8 @@
 @section('content')
 <div class="container">
     <img src="{{ asset('assets/gradient.jpg') }}" style="position: fixed; left: 0; z-index: -1; top: 0; width: 100%; height: 100vh; opacity: 0.2; object-fit: cover;" alt="Background">
-    <a class="btn btn-secondary" href="{{ route('orders') }}">Back</a>
-    <button class="btn btn-primary" onclick="printJS({ printable: 'receipt', type: 'html', css: 'https\://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' })">Print</button>
+    <a class="p-2 bg-gray-400 rounded text-white" href="{{ route('orders') }}">Back</a>
+    <button class="p-1.5 bg-blue-600 rounded text-white" onclick="printJS({ printable: 'receipt', type: 'html', css: 'https\://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' })">Print</button>
 
     <div id="receipt" class="p-3 mt-4 border d-flex flex-column rounded" style="background-color: white; min-width: 700px; max-width: 700px;">
         <div class="d-flex p-3 flex-column rounded" style="background-color: white; width: 100%; height: fit-content;">

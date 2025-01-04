@@ -1,22 +1,89 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="px-5" style="position: relative;">
+<div>
+    <img src="{{ asset('assets/gradient.jpg') }}" class="absolute left-0 z-[-1] top-0 w-full h-screen opacity-20 object-cover" alt="Background">
+    <h1 class="text-3xl font-bold">Analytics & Reports</h1>
 
-    <img src="{{ asset('assets/gradient.jpg') }}" style="position: absolute; left: 0; z-index: -1; top: -24px; width: 100%; height: calc(100vh - 58px); opacity: 0.2; object-fit: cover;" alt="Background">
-    <h1>Analytics & Reports</h1>
-    <form action="">
-        <div class="d-flex mt-4" style="place-items: center;"> 
-            <button class="btn btn-primary">Generate Report</button>
-            <p class="m-0 ms-2 me-1">From: </p>
-            <input class="form-control" style="max-width: fit-content;" type="date" name="start" id="start">
-            <p class="m-0 ms-2 me-1">To: </p>
-            <input class="form-control" style="max-width: fit-content;" type="date" name="end" id="start">
+    <div class="my-12"></div>
+
+    <div class="flex flex-col items-center">
+        <h1 class="text-3xl text-gray-700 font-bold mb-12">Summary</h1>
+
+        <div class="w-full flex justify-between mb-32">
+            <div class="flex flex-col gap-8 min-w-72">
+                <div class="flex bg-white/80 p-4 rounded font-semibold group justify-between gap-6 shadow hover:scale-105 transition-transform">
+                    @php($distributors = App\Models\IncomingDelivery::distributors())
+                    <p>Total Suppliers</p>
+                    <p class="font-bold group-hover:scale-150 transition-transform">{{ count($distributors) }}</p>
+                </div>
+
+                <div class="flex bg-white/80 p-4 group rounded font-semibold justify-between gap-6 shadow hover:scale-105 transition-transform">
+                    @php($transactionToday = App\Models\Order::whereDate('created_at', today()))
+                    <p>Total Customers Today</p>
+                    <p class="font-bold group-hover:scale-150 transition-transform">{{ $transactionToday->count() }}</p>
+                </div>
+
+                <div class="flex bg-white/80 p-4 rounded font-semibold group justify-between gap-6 shadow hover:scale-105 transition-transform">
+                    @php($products = App\Models\Product::all())
+                    <p>Products</p>
+                    <p class="font-bold group-hover:scale-150 transition-transform">{{ count($products) }}</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-8 min-w-72">
+                <div class="flex bg-white/80 p-4 items-center rounded font-semibold group justify-between gap-6 shadow hover:scale-105 transition-transform">
+                    <?php
+
+                    $total = 0;
+
+                    foreach ($transactionToday->get() as $transaction)
+                        $total += $transaction->getTotal();
+                    ?>
+                    <p>Sales Today</p>
+                    <p class="font-semibold text-sm group-hover:scale-110 transition-transform">{{ number_format($total, 2) }} PHP</p>
+                </div>
+
+                <div class="flex bg-white/80 p-4 rounded font-semibold group justify-between gap-6 shadow hover:scale-105 transition-transform">
+                    @php($incomingGoods = App\Models\IncomingDelivery::whereDate('delivery', today())->get())
+                    <p>Incoming Goods Today</p>
+                    <p class="font-bold group-hover:scale-150 transition-transform">{{ count($incomingGoods) }}</p>
+                </div>
+            </div>
         </div>
-    </form>
-    <div class="d-flex justify-content-evenly mt-4">
-        <canvas style="max-width: calc(50vw - 48px); max-height: calc(33vw - 48px); min-width: calc(50vw - 48px); min-height: calc(33vw - 48px);" id="week"></canvas>
-        <canvas style="max-width: calc(50vw - 48px); max-height: calc(33vw - 48px); min-width: calc(50vw - 48px); min-height: calc(33vw - 48px);" id="product"></canvas>
+
+        <hr class="self-stretch border-gray-400">
+        <h1 class="text-3xl text-gray-700 font-bold mt-6">Report Generation</h1>
+
+        <div class="my-5"></div>
+
+        <form class="w-full">
+            <div class="flex mt-4 items-center">
+                <button class="p-2 bg-blue-500 text-white rounded">Generate Report</button>
+                <p class="ml-2 mr-1">From: </p>
+                <input class="border p-1 rounded" type="date" name="start" id="start">
+                <p class="ml-2 mr-1">To: </p>
+                <input class="border p-1 rounded" type="date" name="end" id="start">
+            </div>
+        </form>
+
+        <div class="my-2"></div>
+
+        <canvas class="w-screen h-screen" id="week"></canvas>
+
+        <div class="my-16"></div>
+
+        <hr class="self-stretch border-gray-400">
+        <h1 class="text-3xl text-gray-700 font-bold mt-6">Sales Chart</h1>
+
+        <div class="my-5"></div>
+
+        <canvas class="max-w-[50vw] max-h-[460px]" id="product"></canvas>
+
+        <div class="my-16"></div>
+
+        <hr class="self-stretch border-gray-400">
+        <h1 class="text-3xl text-gray-700 font-bold mt-6">Incoming Orders</h1>
     </div>
 </div>
 @endsection

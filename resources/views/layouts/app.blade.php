@@ -21,131 +21,112 @@
     <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}" type="image/x-icon">
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/js/app.js', 'resources/css/app.css'])
 </head>
 
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+    @if (session('message'))
+    <div class="bg-green-300 w-full p-2 z-50">{{ session('message') }}</div>
+    @endif
+
+    <div id="app" class="flex">
+        <nav class="flex bg-gray-400 h-screen min-w-64">
+            <div class="p-5 w-full">
+                <a class="flex mb-3" href="{{ url('/') }}">
                     <img class="me-2" style="width: 32px;" src="{{ asset('assets/logo.jpg') }}" alt="Logo">
-                    Sobida WMS
+                    <p class="text-lg">Sobida WMS</p>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <ul class="flex flex-col gap-3">
+                    @php($user = auth()->user())
+                    @if($user && $user->isSysRole('employee'))
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('deliveries') }}" class="nav-link">Pending Deliveries</a>
+                    </li>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('deliveries_success') }}" class="nav-link">Successful Deliveries</a>
+                    </li>
+                    @elseif($user && $user->isSysRole('manager'))
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('incoming') }}" class="nav-link">Incoming Orders</a>
+                    </li>
 
-                    </ul>
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('orders') }}" class="nav-link">Sales Management</a>
+                    </li>
 
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
-
-                        @php($user = auth()->user())
-                        @if($user && $user->isSysRole('employee'))
-                        <li class="nav-item">
-                            <a href="{{ route('deliveries') }}" class="nav-link">Pending Deliveries</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{ route('deliveries_success') }}" class="nav-link">Successful Deliveries</a>
-                        </li>
-                        @elseif($user && $user->isSysRole('manager'))
-                        <!-- <li class="nav-item">
-                            <a href="{{ route('incoming') }}" class="nav-link">Incoming Orders</a>
-                        </li> -->
-
-                        <li class="nav-item">
-                            <a href="{{ route('orders') }}" class="nav-link">Sales Management</a>
-                        </li>
-
-                        <!-- <li class="nav-item">
+                    <!-- <li class="nav-item">
                             <a href="{{ route('employee_attendance') }}" class="nav-link">Employee Attendance Tracking</a>
                         </li> -->
 
-                        <li class="nav-item">
-                            <a href="{{ route('inventory') }}" class="nav-link">Inventory Management</a>
-                        </li>
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('inventory') }}" class="nav-link">Inventory Management</a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('users') }}" class="nav-link">User Management</a>
-                        </li>
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('users') }}" class="nav-link">User Management</a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('reports') }}" class="nav-link">Report Generation</a>
-                        </li>
-                        @elseif ($user && $user->isSysRole('admin'))
-                        <!-- <li class="nav-item">
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('reports') }}" class="nav-link">Report Generation</a>
+                    </li>
+                    @elseif ($user && $user->isSysRole('admin'))
+                    <!-- <li class="nav-item">
                             <a href="{{ route('incoming') }}" class="nav-link">Incoming Orders</a>
                         </li> -->
 
-                        <li class="nav-item">
-                            <a href="{{ route('orders') }}" class="nav-link">Sales Management</a>
-                        </li>
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('orders') }}" class="nav-link">Sales Management</a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('inventory') }}" class="nav-link">Inventory Management</a>
-                        </li>
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('inventory') }}" class="nav-link">Inventory Management</a>
+                    </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('users') }}" class="nav-link">User Management</a>
-                        </li>
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('users') }}" class="nav-link">User Management</a>
+                    </li>
 
-                        <!-- <li class="nav-item">
+                    <!-- <li class="nav-item">
                             <a href="{{ route('warehouse') }}" class="nav-link">Warehouse Management</a>
                         </li> -->
 
-                        <li class="nav-item">
-                            <a href="{{ route('reports') }}" class="nav-link">Report Generation</a>
-                        </li>
-                        @endif
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('reports') }}" class="nav-link">Report Generation</a>
+                    </li>
+                    @endif
 
-                        @guest
-                        @if (Route::has('login'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                        </li>
-                        @endif
-                        @else
-                        <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                {{ Auth::user()->name }}
+                    @guest
+                    @if (Route::has('login'))
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                    </li>
+                    @endif
+                    @else
+                    <li class="nav-item dropdown">
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            {{ Auth::user()->name }}
+                        </a>
+
+                        <div class="flex flex-col gap-3">
+                            <a class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
                             </a>
 
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-
-                                @if(($user && $user->isSysRole('manager')) || ($user && $user->isSysRole('admin')))
-                                <a class="dropdown-item" href="{{ route('users') }}">
-                                    {{ __('User Management') }}
-                                </a>
-                                @endif
-
-                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                    {{ __('Logout') }}
-                                </a>
-
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                            </div>
-                        </li>
-                        @endguest
-                    </ul>
-                </div>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        </div>
+                    </li>
+                    @endguest
+                </ul>
             </div>
         </nav>
 
-        @if (session('message'))
-        <div class="alert alert-info">{{ session('message') }}</div>
-        @endif
 
-        <main class="py-4">
+
+        <main class="h-screen w-full p-5 overflow-y-auto">
             @yield('content')
         </main>
     </div>

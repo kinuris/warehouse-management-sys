@@ -16,9 +16,10 @@ class IncomingDelivery extends Model
         'delivery',
     ];
 
-    public function status() {
+    public function status()
+    {
         if (IncomingDeliverySuccess::query()->where('incoming_delivery_id', $this->id)->exists()) {
-            return 'delivered'; 
+            return 'delivered';
         } else if (IncomingDeliveryCancel::query()->where('incoming_delivery_id', $this->id)->exists()) {
             return 'cancelled';
         } else {
@@ -26,7 +27,8 @@ class IncomingDelivery extends Model
         }
     }
 
-    public function deliveryDate(): null | DateTime {
+    public function deliveryDate(): null | DateTime
+    {
         if (IncomingDeliverySuccess::query()->where('incoming_delivery_id', $this->id)->exists()) {
             return IncomingDeliverySuccess::query()->where('incoming_delivery_id', $this->id)->first()->created_at;
         }
@@ -37,6 +39,15 @@ class IncomingDelivery extends Model
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');
+    }
+
+
+    public static function distributors(): array
+    {
+        return IncomingDelivery::query()
+            ->distinct(['distributor'])
+            ->pluck('distributor')
+            ->toArray();
     }
 
     use HasFactory;
