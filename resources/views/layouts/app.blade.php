@@ -68,7 +68,7 @@
                     </li>
 
                     <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('reports') }}" class="nav-link">Report Generation</a>
+                        <a href="{{ route('reports') }}" class="nav-link">Summary and Reports</a>
                     </li>
                     @elseif ($user && $user->isSysRole('admin'))
                     <!-- <li class="nav-item">
@@ -123,8 +123,6 @@
                 </ul>
             </div>
         </nav>
-
-
 
         <main class="h-screen w-full p-5 overflow-y-auto">
             @yield('content')

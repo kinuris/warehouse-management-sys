@@ -84,6 +84,30 @@
 
         <hr class="self-stretch border-gray-400">
         <h1 class="text-3xl text-gray-700 font-bold mt-6">Incoming Orders</h1>
+
+        <table class="min-w-full bg-white/60 rounded-lg shadow-lg mt-8 mb-24">
+            <thead>
+                <tr>
+                    <th class="py-2">ID</th>
+                    <th class="py-2">Supplier</th>
+                    <th class="py-2">Product</th>
+                    <th class="py-2">Quantity</th>
+                    <th class="py-2">Delivery Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php($incomingDeliveries = App\Models\IncomingDelivery::all())
+                @foreach($incomingDeliveries as $delivery)
+                <tr>
+                    <td class="border px-4 py-2">{{ $delivery->id }}</td>
+                    <td class="border px-4 py-2">{{ $delivery->distributor }}</td>
+                    <td class="border px-4 py-2">{{ $delivery->product->name }}</td>
+                    <td class="border px-4 py-2">{{ $delivery->quantity }}</td>
+                    <td class="border px-4 py-2">{{ $delivery->delivery }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </div>
 @endsection
