@@ -45,7 +45,7 @@
                         <a class="ml-2 p-1.5 rounded-lg bg-red-600 text-white" href="{{ route('order_delete', ['order' => $order->id]) }}">Cancel</a>
                         @endif
                         @if ($order->isDelivered())
-                        <a class="btn btn-primary" href="{{ route('delivery_proof', ['order' => $order->id]) }}">Proof</a>
+                        <a class="ml-2 p-1.5 rounded-lg bg-purple-600 text-white" href="{{ route('delivery_proof', ['order' => $order->id]) }}">Proof</a>
                         @endif
                     </td>
                 </tr>

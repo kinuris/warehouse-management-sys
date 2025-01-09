@@ -2,21 +2,23 @@
 
 @section('content')
 <div class="container">
-    <h1>Delivery Proof For Order: # {{ $record->order_id }}</h1>
+    <h1 class="text-3xl font-bold mb-6">Delivery Proof For Order: # {{ $record->order_id }}</h1>
     <div class="card" style="width: 18rem;">
-        <div class="card-img-top ratio ratio-1x1 rounded">
-            <img src="{{ asset('storage/delivery/images/' . $record->image_link) }}" class="object-fit-cover" alt="Card Image">
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Date & Time of Delivery</h5>
-            <p class="card-text">{{ $record->delivery_time }}</p>
+        <img src="{{ asset('storage/delivery/images/' . $record->image_link) }}" class="object-fit-cover rounded shadow-lg" alt="Card Image">
+        <div class="my-4">
+            <h5 class="text-xl font-bold">Date & Time of Delivery</h5>
+            <p class="card-text">{{ \Carbon\Carbon::parse($record->delivery_time)->format('F j, Y, g:i a') }}</p>
         </div>
     </div>
 
     @if (auth()->user()->isSysRole('manager'))
-    <a href="{{ route('orders') }}" class="mt-4 btn btn-secondary">Back</a>
+    <a href="{{ route('orders') }}">
+        <button type="button" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Back</button>
+    </a>
     @else
-    <a href="{{ route('deliveries_success') }}" class="mt-4 btn btn-secondary">Back</a>
+    <a href="{{ route('deliveries_success') }}">
+        <button type="button" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Back</button>
+    </a>
     @endif
 </div>
 @endsection
