@@ -41,7 +41,7 @@
                 <div class="flex flex-col gap-2">
                     @foreach ($totalItemsAndQuantity as $item => $quantity)
                     @php($item = App\Models\Product::find($item))
-                    <p class="text-red-600">{{ $item->name }} <b>x{{ $quantity }}</b></p>
+                    <p class="text-red-600">{{ $item->name }} - <b>{{ $quantity }}</b></p>
                     @endforeach
                 </div>
             </div>

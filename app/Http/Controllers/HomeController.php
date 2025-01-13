@@ -20,4 +20,25 @@ class HomeController extends Controller
         return view('home-page')
             ->with('records', $pastRecords);
     }
+
+    public function generateReport()
+    {
+        $records = Order::query();
+
+        $start = request()->query('start');
+        $end = request()->query('end');
+
+        if ($start) {
+            $records = $records->where('created_at', '>=', $start);
+        }
+
+        if ($end) {
+            $records = $records->where('created_at', '<=', $end);
+        }
+
+        $records = $records->get();
+
+        return view('report')
+            ->with('orders', $records);
+    }
 }

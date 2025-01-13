@@ -58,6 +58,9 @@
                     <!-- <li class="nav-item">
                             <a href="{{ route('employee_attendance') }}" class="nav-link">Employee Attendance Tracking</a>
                         </li> -->
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('distributor') }}" class="nav-link">Distributors</a>
+                    </li>
 
                     <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
                         <a href="{{ route('inventory') }}" class="nav-link">Inventory Management</a>
@@ -77,6 +80,10 @@
 
                     <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
                         <a href="{{ route('orders') }}" class="nav-link">Sales Management</a>
+                    </li>
+
+                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
+                        <a href="{{ route('distributor') }}" class="nav-link">Distributors</a>
                     </li>
 
                     <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">

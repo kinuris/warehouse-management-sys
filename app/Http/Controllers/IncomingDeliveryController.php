@@ -37,6 +37,7 @@ class IncomingDeliveryController extends Controller
         ]);
 
         $validated['product_id'] = $validated['product'];
+        $validated['distributor_id'] = $validated['distributor'];
 
         IncomingDelivery::create($validated);
 

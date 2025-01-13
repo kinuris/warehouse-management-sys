@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1 class="text-3xl font-bold mb-3">Issue Delivery Order</h1>
+    <h1 class="text-3xl font-bold mb-3">Issue Walk-in Order</h1>
     <form class="flex" action="{{ route('order_store') }}" method="post">
         @csrf
         <div class="border border-black rounded p-3 pt-2 mr-3">
@@ -67,14 +67,14 @@
             </div>
         </div>
 
-        <div class="flex flex-col">
+        <div class="flex flex-col min-w-[450px]">
             <div class="border border-black bg-blue-200 rounded p-3 pt-2 mb-3">
-                <div class="mb-2 hidden">
+                <div class="mb-2">
                     <p class="m-0 text-lg font-bold">Client Selection</p>
-                    <input class="mr-1" type="checkbox" name="walk_in" id="walk-in">
-                    <label for="walk-in">Walk-in Order?</label>
+                    <input class="mr-1 hidden" checked type="checkbox" name="walk_in" id="walk-in">
+                    <label class="hidden" for="walk-in">Walk-in Order?</label>
                 </div>
-                <div class="flex justify-between">
+                <div class="justify-between">
                     <div class="flex flex-col w-full">
                         <label class="form-label" for="name">Client Name:</label>
                         <input class="border border-gray-500 p-1 rounded {{ $errors->has('name') ? 'is-invalid' : '' }}" type="text" value="{{ old('name') }}" name="name" id="name">
@@ -96,7 +96,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col my-3">
+                <div class="hidden flex-col my-3">
                     <label class="form-label" for="address">Client Address:</label>
                     <input class="border border-gray-500 p-1 rounded {{ $errors->has('address') ? 'is-invalid' : '' }}" type="text" value="{{ old('address') }}" name="address" id="address">
                     @if ($errors->has('address'))
@@ -106,7 +106,7 @@
                     @endif
                 </div>
 
-                <div class="flex flex-col my-3">
+                <div class="hidden flex-col my-3">
                     <label for="time">Delivery Time (Deadline): </label>
                     <input class="border border-gray-500 p-1 rounded {{ $errors->has('delivery_time') ? 'is-invalid' : '' }}" type="datetime-local" value="{{ old('delivery_time') }}" name="delivery_time" id="time">
                     @if ($errors->has('delivery_time'))

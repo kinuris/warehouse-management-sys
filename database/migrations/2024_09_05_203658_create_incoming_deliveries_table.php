@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('incoming_deliveries', function (Blueprint $table) {
             $table->id();
-            $table->string('distributor');
+            // $table->string('distributor');
+            $table->foreignId('distributor_id')
+                ->references('id')
+                ->on('distributors');
 
             $table->foreignId('product_id')
                 ->references('id')

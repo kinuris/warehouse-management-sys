@@ -22,6 +22,37 @@ class OrderController extends Controller
         return view('orders.order-management')->with('orders', $orders);
     }
 
+    public function createWalkin(Request $request)
+    {
+        $search = $request->query('search');
+
+        if (!$search) {
+            $products = Product::query();
+        } else {
+            $products = Product::where('name', 'like', '%' . $search . '%');
+        }
+
+        $category = $request->query('category', -1);
+        if ($category && (int) $category !== -1) {
+            $products = $products->where('category_id', '=', $category);
+        }
+
+        $totalPrice = 0;
+
+        if (Session::has('orderStage')) {
+            $stage = Session::get('orderStage');
+
+            foreach ($stage as $id => $quantity) {
+                $product = Product::find($id);
+                $totalPrice += $product['price'] * $quantity;
+            }
+        }
+
+        return view('orders.order-walkin-add')
+            ->with('products', $products->get())
+            ->with('totalPrice', $totalPrice);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

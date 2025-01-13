@@ -12,6 +12,7 @@
                 <th class="border border-gray-700 py-2 px-4 text-sm text-gray-800">Distributor</th>
                 <th class="border border-gray-700 py-2 px-4 text-sm text-gray-800">Product</th>
                 <th class="border border-gray-700 py-2 px-4 text-sm text-gray-800">Quantity</th>
+                <th class="border border-gray-700 py-2 px-4 text-sm text-gray-800">Price</th>
                 <th class="border border-gray-700 py-2 px-4 text-sm text-gray-800">Delivery Schedule</th>
                 <th class="border border-gray-700 py-2 px-4 text-sm text-gray-800">Actions</th>
             </thead>
@@ -19,9 +20,10 @@
                 @foreach (App\Models\IncomingDelivery::all() as $delivery)
                 <tr>
                     <td class="border border-gray-700 py-2 px-4 text-sm text-gray-800">{{ $delivery->id }}</td>
-                    <td class="border border-gray-700 py-2 px-4 text-sm text-gray-800">{{ $delivery->distributor }}</td>
+                    <td class="border border-gray-700 py-2 px-4 text-sm text-gray-800">{{ $delivery->distributor->name }}</td>
                     <td class="border border-gray-700 py-2 px-4 text-sm text-gray-800"><a class="underline" href="/inventory/edit/{{ $delivery->product->id }}">{{ $delivery->product->name }}</a></td>
                     <td class="border border-gray-700 py-2 px-4 text-sm text-gray-800">{{ $delivery->quantity }}</td>
+                    <td class="border border-gray-700 py-2 px-4 text-sm text-gray-800">{{ number_format($delivery->quantity * $delivery->product->price, 2) }} PHP</td>
                     <td class="border border-gray-700 py-2 px-4 text-sm text-gray-800">{{ $delivery->delivery }}</td>
                     <td class="border border-gray-700 py-2 px-4 text-sm text-gray-800">
                         <div class="flex gap-2">

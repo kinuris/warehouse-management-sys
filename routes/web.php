@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DistributorController;
 use App\Http\Controllers\EmployeeAttendanceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncomingDeliveryController;
@@ -17,6 +18,10 @@ Route::get('/', [HomeController::class, 'index'])
     ->middleware('auth')
     ->name('reports');
 
+    Route::get('/report/generate', [HomeController::class, 'generateReport'])
+        ->middleware('auth')
+        ->name('report.generate');
+
 Route::get('/login', [AuthController::class, 'login']);
 Route::post('/login', [AuthController::class, 'userLogin'])->name('login');
 
@@ -26,6 +31,7 @@ Route::get('/register', [AuthController::class, 'register'])
 Route::post('/register', [AuthController::class, 'userRegister'])
     ->name('register')
     ->can('create', User::class);
+
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -66,6 +72,10 @@ Route::controller(OrderController::class)->group(function () {
 
     Route::get('/order/add', 'create')
         ->name('order_add')
+        ->can('create', User::class);
+
+    Route::get('/order/add/walkin', 'createWalkin')
+        ->name('order_walkin_add')
         ->can('create', User::class);
 
     Route::post('/order/add', 'store')
@@ -230,3 +240,15 @@ Route::controller(WarehouseSectionController::class)->group(function () {
         ->name('warehouse_section_destroy')
         ->can('delete', Warehouse::class);
 });
+
+Route::controller(DistributorController::class)
+    ->group(function() {
+        Route::get('/distributor', 'index')->name('distributor');
+
+        Route::post('/distributor/store', 'store')->name('distributor.store');
+
+        Route::get('/distributor/edit/{distributor}', 'edit')->name('distributor.edit');
+        Route::post('/distributor/update/{distributor}', 'update')->name('distributor.update');
+
+        Route::post('/distributor/destroy/{distributor}', 'destroy')->name('distributor.destroy');
+    });

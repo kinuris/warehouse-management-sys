@@ -8,7 +8,28 @@
     <div class="my-12"></div>
 
     <div class="flex flex-col items-center">
-        <h1 class="text-3xl text-gray-700 font-bold mb-12">Summary</h1>
+        <h1 class="text-3xl text-gray-700 font-bold mb-12 ">Report Generation</h1>
+
+        <div class="my-5"></div>
+
+        <form class="w-full" action="{{ route('report.generate') }}">
+            <div class="flex mt-4 items-center">
+                <button class="p-2 bg-blue-500 text-white rounded">Generate Report</button>
+                <p class="ml-2 mr-1">From: </p>
+                <input class="border p-1 rounded" type="date" name="start" id="start">
+                <p class="ml-2 mr-1">To: </p>
+                <input class="border p-1 rounded" type="date" name="end" id="start">
+            </div>
+        </form>
+
+        <div class="my-2"></div>
+
+        <canvas class="w-screen h-screen" id="week"></canvas>
+
+        <div class="my-16"></div>
+
+        <hr class="self-stretch border-gray-400">
+        <h1 class="text-3xl text-gray-700 font-bold mt-6">Summary</h1>
 
         <div class="w-full flex justify-between mb-32">
             <div class="flex flex-col gap-8 min-w-72">
@@ -53,27 +74,6 @@
         </div>
 
         <hr class="self-stretch border-gray-400">
-        <h1 class="text-3xl text-gray-700 font-bold mt-6">Report Generation</h1>
-
-        <div class="my-5"></div>
-
-        <form class="w-full">
-            <div class="flex mt-4 items-center">
-                <button class="p-2 bg-blue-500 text-white rounded">Generate Report</button>
-                <p class="ml-2 mr-1">From: </p>
-                <input class="border p-1 rounded" type="date" name="start" id="start">
-                <p class="ml-2 mr-1">To: </p>
-                <input class="border p-1 rounded" type="date" name="end" id="start">
-            </div>
-        </form>
-
-        <div class="my-2"></div>
-
-        <canvas class="w-screen h-screen" id="week"></canvas>
-
-        <div class="my-16"></div>
-
-        <hr class="self-stretch border-gray-400">
         <h1 class="text-3xl text-gray-700 font-bold mt-6">Sales Chart</h1>
 
         <div class="my-5"></div>
@@ -100,7 +100,7 @@
                 @foreach($incomingDeliveries as $delivery)
                 <tr>
                     <td class="border px-4 py-2">{{ $delivery->id }}</td>
-                    <td class="border px-4 py-2">{{ $delivery->distributor }}</td>
+                    <td class="border px-4 py-2">{{ $delivery->distributor->name }}</td>
                     <td class="border px-4 py-2">{{ $delivery->product->name }}</td>
                     <td class="border px-4 py-2">{{ $delivery->quantity }}</td>
                     <td class="border px-4 py-2">{{ $delivery->delivery }}</td>

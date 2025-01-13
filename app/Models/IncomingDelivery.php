@@ -10,7 +10,7 @@ class IncomingDelivery extends Model
 {
     protected $table = 'incoming_deliveries';
     protected $fillable = [
-        'distributor',
+        'distributor_id',
         'product_id',
         'quantity',
         'delivery',
@@ -41,13 +41,20 @@ class IncomingDelivery extends Model
         return $this->belongsTo(Product::class, 'product_id');
     }
 
+    public function distributor() {
+        return $this->belongsTo(Distributor::class);
+    }
+
 
     public static function distributors(): array
     {
-        return IncomingDelivery::query()
-            ->distinct(['distributor'])
-            ->pluck('distributor')
+        $distributors = self::query()
+            ->join('distributors', 'incoming_deliveries.distributor_id', '=', 'distributors.id')
+            ->distinct('name')
+            ->pluck('distributors.name')
             ->toArray();
+
+        return $distributors;
     }
 
     use HasFactory;
