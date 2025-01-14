@@ -11,6 +11,35 @@
         <h1 class="text-3xl text-gray-700 font-bold mb-12 ">Report Generation</h1>
 
         <div class="my-5"></div>
+        <div class="mb-6 w-full">
+            <?php
+            $orders = App\Models\Order::all();
+
+            $goodsSold = 0;
+            $netRevenue = 0;
+            $netProfit = 0;
+
+            foreach ($orders as $order) {
+                foreach ($order->getItemsAndQuantity() as [$id, $qty]) {
+                    $goodsSold += $qty;
+                    $netRevenue += $order->getTotal();
+                    $netProfit += $order->getProfit();
+                }
+            }
+            ?>
+
+            <div class="flex justify-between w-full">
+                <div>
+                    <h3 class="text-xl font-semibold">Goods Sold: {{ number_format($goodsSold, 0) }}</h3>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold">Net Revenue: {{ number_format($netRevenue, 2) }} PHP</h3>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold">Net Profit: {{ number_format($netProfit, 2) }} PHP</h3>
+                </div>
+            </div>
+        </div>
 
         <form class="w-full" action="{{ route('report.generate') }}">
             <div class="flex mt-4 items-center">
@@ -77,6 +106,8 @@
         <h1 class="text-3xl text-gray-700 font-bold mt-6">Sales Chart</h1>
 
         <div class="my-5"></div>
+
+
 
         <canvas class="max-w-[50vw] max-h-[460px]" id="product"></canvas>
 

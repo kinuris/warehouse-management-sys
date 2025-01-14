@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <img src="{{ asset('assets/gradient.jpg') }}" style="position: fixed; left: 0; z-index: -1; top: 0; width: 100%; height: 100vh; opacity: 0.2; object-fit: cover;" alt="Background">
+    <img src="{{ asset('assets/gradient.jpg') }}" class="blur-sm" style="position: fixed; left: 0; z-index: -1; top: 0; width: 100%; height: 100vh; opacity: 0.4; object-fit: cover;" alt="Background">
     <h1 class="text-3xl font-bold">Sales Management</h1>
     <div class="m-5"></div>
     <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow" href="{{ route('order_add') }}" class="btn btn-primary my-3">Go to POS</a>
