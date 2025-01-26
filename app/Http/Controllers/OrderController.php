@@ -49,7 +49,7 @@ class OrderController extends Controller
         }
 
         return view('orders.order-walkin-add')
-            ->with('products', $products->get())
+            ->with('products', $products->paginate(5))
             ->with('totalPrice', $totalPrice);
     }
 
@@ -83,7 +83,7 @@ class OrderController extends Controller
         }
 
         return view('orders.order-add')
-            ->with('products', $products->get())
+            ->with('products', $products->paginate(5))
             ->with('totalPrice', $totalPrice);
     }
 
@@ -290,6 +290,23 @@ class OrderController extends Controller
             $stage[$product->id] += $validated['quantity'];
         } else {
             $stage[$product->id] = $validated['quantity'];
+        }
+
+        Session::put('orderStage', $stage);
+
+        return back()->withInput();
+    }
+
+    public function stageRemove(Request $request, Product $product)
+    {
+        $stage = Session::get('orderStage');
+
+        if (!$stage) {
+            return back()->withInput();
+        }
+
+        if (array_key_exists($product->id, $stage)) {
+            unset($stage[$product->id]);
         }
 
         Session::put('orderStage', $stage);

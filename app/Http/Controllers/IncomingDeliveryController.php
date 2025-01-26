@@ -31,15 +31,22 @@ class IncomingDeliveryController extends Controller
     {
         $validated = $request->validate([
             'distributor' => ['required'],
-            'product' => ['required'],
-            'quantity' => ['required'],
+            'products' => ['required', 'array'],
+            'quantities' => ['required', 'array'],
             'delivery' => ['required', 'date', 'after:now'],
         ]);
 
-        $validated['product_id'] = $validated['product'];
+        $validated['batch_id'] = IncomingDelivery::genNoCollisionBatchId();
         $validated['distributor_id'] = $validated['distributor'];
 
-        IncomingDelivery::create($validated);
+        $products = $validated['products'];
+        $quantities = $validated['quantities'];
+        for($i = 0; $i < count($products); $i++) {
+            $validated['product_id'] = $products[$i];
+            $validated['quantity'] = $quantities[$i];
+
+            IncomingDelivery::create($validated);
+        }
 
         return redirect()->route('incoming')->with('message', 'Incoming Delivery Scheduled Successfully');
     }
@@ -104,5 +111,41 @@ class IncomingDeliveryController extends Controller
         ]);
 
         return redirect()->route('incoming')->with('message', 'Incoming Delivery Canceled Successfully');
+    }
+
+    public function deliverBatch($batchId) {
+        $deliveries = IncomingDelivery::query()->where('batch_id', $batchId)->get();
+        foreach ($deliveries as $delivery) {
+            if ($delivery->status() === 'pending') {
+                $delivery->product->update([
+                    'quantity' => $delivery->product->quantity + $delivery->quantity
+                ]);
+
+                IncomingDeliverySuccess::query()->create([
+                    'incoming_delivery_id' => $delivery->id
+                ]);
+            }
+        }
+
+        return redirect()->route('incoming')->with('message', 'Incoming Delivery Batch Delivered Successfully');
+    }
+
+    public function cancelBatch($batchId) {
+        $deliveries = IncomingDelivery::query()->where('batch_id', $batchId)->get();
+        foreach ($deliveries as $delivery) {
+            if ($delivery->status() === 'pending') {
+                IncomingDeliveryCancel::query()->create([
+                    'incoming_delivery_id' => $delivery->id
+                ]);
+            }
+        }
+
+        return redirect()->route('incoming')->with('message', 'Incoming Delivery Batch Canceled Successfully');
+    }
+
+    public function receipt($batchId) {
+        $orders = IncomingDelivery::query()->where('batch_id', $batchId)->get();
+
+        return view('incoming.incoming-delivery-receipt')->with('orders', $orders);
     }
 }

@@ -30,14 +30,18 @@ class DistributorController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'authority_name' => 'required|string|max:255',
             'email' => 'required|email|unique:distributors,email',
             'contact_number' => 'required|string|max:15',
         ]);
 
         $distributor = new Distributor();
+
         $distributor->name = $request->input('name');
+        $distributor->authority_name = $request->input('authority_name');
         $distributor->email = $request->input('email');
         $distributor->contact_number = $request->input('contact_number');
+
         $distributor->save();
 
         return redirect()->route('distributor')->with('success', 'Distributor created successfully.');

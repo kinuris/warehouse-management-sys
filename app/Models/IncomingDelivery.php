@@ -13,6 +13,7 @@ class IncomingDelivery extends Model
         'distributor_id',
         'product_id',
         'quantity',
+        'batch_id',
         'delivery',
     ];
 
@@ -45,6 +46,15 @@ class IncomingDelivery extends Model
         return $this->belongsTo(Distributor::class);
     }
 
+    public static function genNoCollisionBatchId() {
+        $batchId = null;
+        do {
+            $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $batchId = substr(str_shuffle($chars), 0, 16);
+        } while (self::query()->where('batch_id', $batchId)->exists());
+
+        return $batchId;
+    }
 
     public static function distributors(): array
     {

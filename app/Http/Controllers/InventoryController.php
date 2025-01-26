@@ -13,10 +13,12 @@ class InventoryController extends Controller
         $search = $request->query('search');
 
         if (!$search) {
-            $products = Product::all();
+            $products = Product::query();
         } else {
-            $products = Product::where('name', 'like', '%' . $search . '%')->get();
+            $products = Product::query()->where('name', 'like', '%' . $search . '%');
         }
+
+        $products = $products->paginate(6);
 
         return view('inventory.inventory-management')->with('products', $products);
     }

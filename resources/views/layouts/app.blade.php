@@ -26,106 +26,153 @@
 
 <body>
     @if (session('message'))
-    <div class="bg-green-300 w-full p-2 z-50">{{ session('message') }}</div>
+    <div class="relative">
+        <div id="flash-message" class="bg-green-300 w-full p-2 z-50">
+            {{ session('message') }}
+            <div id="progress-bar" class="h-1 bg-green-500 absolute bottom-0 left-0 w-full"></div>
+        </div>
+    </div>
+    <script>
+        const duration = 3000;
+        const progressBar = document.getElementById('progress-bar');
+        const flashMessage = document.getElementById('flash-message');
+        
+        let start = null;
+        function animate(timestamp) {
+            if (!start) start = timestamp;
+            const progress = timestamp - start;
+            const width = 100 - ((progress / duration) * 100);
+            
+            if (width <= 0) {
+                flashMessage.style.display = 'none';
+                return;
+            }
+            
+            progressBar.style.width = width + '%';
+            requestAnimationFrame(animate);
+        }
+        
+        requestAnimationFrame(animate);
+    </script>
     @endif
 
     <div id="app" class="flex">
-        <nav class="flex bg-gray-400 h-screen min-w-64">
-            <div class="p-5 w-full">
-                <a class="flex mb-3" href="{{ url('/') }}">
-                    <img class="me-2" style="width: 32px;" src="{{ asset('assets/logo.jpg') }}" alt="Logo">
-                    <p class="text-lg">Sobida WMS</p>
+        <nav class="flex bg-gray-800 h-screen min-w-72 shadow-lg">
+            <div class="p-6 w-full">
+                <a class="flex items-center mb-8" href="{{ url('/') }}">
+                    <img class="h-10 w-10 mr-3 rounded-lg" src="{{ asset('assets/logo.jpg') }}" alt="Logo">
+                    <span class="text-xl font-semibold text-white">Sobida WMS</span>
                 </a>
-                <ul class="flex flex-col gap-3">
+                
+                <ul class="space-y-2">
                     @php($user = auth()->user())
                     @if($user && $user->isSysRole('employee'))
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('deliveries') }}" class="nav-link">Pending Deliveries</a>
-                    </li>
-
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('deliveries_success') }}" class="nav-link">Successful Deliveries</a>
-                    </li>
+                        <li>
+                            <a href="{{ route('deliveries') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-truck mr-3"></i>
+                                <span>Pending Deliveries</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('deliveries_success') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-check-circle mr-3"></i>
+                                <span>Successful Deliveries</span>
+                            </a>
+                        </li>
                     @elseif($user && $user->isSysRole('manager'))
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('incoming') }}" class="nav-link">Incoming Orders</a>
-                    </li>
-
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('orders') }}" class="nav-link">Sales Management</a>
-                    </li>
-
-                    <!-- <li class="nav-item">
-                            <a href="{{ route('employee_attendance') }}" class="nav-link">Employee Attendance Tracking</a>
-                        </li> -->
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('distributor') }}" class="nav-link">Distributors</a>
-                    </li>
-
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('inventory') }}" class="nav-link">Inventory Management</a>
-                    </li>
-
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('users') }}" class="nav-link">User Management</a>
-                    </li>
-
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('reports') }}" class="nav-link">Summary and Reports</a>
-                    </li>
+                        <li>
+                            <a href="{{ route('incoming') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-box-arrow-in-down mr-3"></i>
+                                <span>Incoming Orders</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('orders') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-cart mr-3"></i>
+                                <span>Sales Management</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('distributor') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-people mr-3"></i>
+                                <span>Distributors</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('inventory') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-box mr-3"></i>
+                                <span>Inventory Management</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('users') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-person-gear mr-3"></i>
+                                <span>User Management</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('reports') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-file-earmark-text mr-3"></i>
+                                <span>Summary and Reports</span>
+                            </a>
+                        </li>
                     @elseif ($user && $user->isSysRole('admin'))
-                    <!-- <li class="nav-item">
-                            <a href="{{ route('incoming') }}" class="nav-link">Incoming Orders</a>
-                        </li> -->
-
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('orders') }}" class="nav-link">Sales Management</a>
-                    </li>
-
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('distributor') }}" class="nav-link">Distributors</a>
-                    </li>
-
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('inventory') }}" class="nav-link">Inventory Management</a>
-                    </li>
-
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('users') }}" class="nav-link">User Management</a>
-                    </li>
-
-                    <!-- <li class="nav-item">
-                            <a href="{{ route('warehouse') }}" class="nav-link">Warehouse Management</a>
-                        </li> -->
-
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a href="{{ route('reports') }}" class="nav-link">Report Generation</a>
-                    </li>
+                        <li>
+                            <a href="{{ route('orders') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-cart mr-3"></i>
+                                <span>Sales Management</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('distributor') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-people mr-3"></i>
+                                <span>Distributors</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('inventory') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-box mr-3"></i>
+                                <span>Inventory Management</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('users') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-person-gear mr-3"></i>
+                                <span>User Management</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('reports') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-file-earmark-text mr-3"></i>
+                                <span>Report Generation</span>
+                            </a>
+                        </li>
                     @endif
 
                     @guest
-                    @if (Route::has('login'))
-                    <li class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full">
-                        <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                    </li>
-                    @endif
+                        @if (Route::has('login'))
+                            <li>
+                                <a href="{{ route('login') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                    <i class="bi bi-box-arrow-in-right mr-3"></i>
+                                    <span>{{ __('Login') }}</span>
+                                </a>
+                            </li>
+                        @endif
                     @else
-                    <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            {{ Auth::user()->name }}
-                        </a>
-
-                        <div class="flex flex-col gap-3">
-                            <a class="block py-2.5 px-4 rounded transition duration-200 bg-gray-700 hover:bg-white hover:text-grey-700 text-gray-300 mt-1 w-full" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                {{ __('Logout') }}
-                            </a>
-
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        </div>
-                    </li>
+                        <li class="mt-auto pt-4 border-t border-gray-700">
+                            <div class="px-4 py-3">
+                                
+                                <a href="{{ route('logout') }}" 
+                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                   class="flex items-center px-4 py-2 text-red-400 rounded-lg hover:bg-red-500 hover:text-white transition-all">
+                                    <i class="bi bi-box-arrow-right mr-3"></i>
+                                    <span>{{ __('Logout') }}</span>
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                                    @csrf
+                                </form>
+                            </div>
+                        </li>
                     @endguest
                 </ul>
             </div>

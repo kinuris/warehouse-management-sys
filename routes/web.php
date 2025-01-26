@@ -90,6 +90,10 @@ Route::controller(OrderController::class)->group(function () {
         ->name('order_stage_sub')
         ->can('create', User::class);
 
+    Route::post('/order/stage/{product}/remove', 'stageRemove')
+        ->name('order_stage_remove')
+        ->can('create', User::class);
+
     Route::get('/order/delete/{order}', 'delete')
         ->middleware('auth')
         ->name('order_delete');
@@ -146,6 +150,18 @@ Route::controller(IncomingDeliveryController::class)->group(function() {
 
     Route::get('/incoming/cancel/{delivery}', 'cancel')
         ->name('incoming_cancel')
+        ->can('update', User::class);
+    
+    Route::get('/incoming/deliverbatch/{batchId}', 'deliverBatch')
+        ->name('incoming_deliver_batch')
+        ->can('update', User::class);
+
+    Route::get('/incoming/cancelbatch/{batchId}', 'cancelBatch')
+        ->name('incoming_cancel_batch')
+        ->can('update', User::class);
+    
+    Route::get('/incoming/reciept/{batchId}', 'receipt')
+        ->name('incoming_receipt')
         ->can('update', User::class);
 });
 

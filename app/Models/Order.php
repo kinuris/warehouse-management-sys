@@ -20,6 +20,13 @@ class Order extends Model
         'is_cancelled',
     ];
 
+    public static function uniqueClientNames()
+    {
+        return Order::query()
+            ->get()
+            ->unique('client_name');
+    }
+
     public function isWalkIn()
     {
         return $this->address === '(Walk-in Order)';
@@ -86,7 +93,8 @@ class Order extends Model
         return $profit;
     }
 
-    public function getTax() {
+    public function getTax()
+    {
         return $this->getProfit() * 0.12;
     }
 
