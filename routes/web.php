@@ -18,9 +18,9 @@ Route::get('/', [HomeController::class, 'index'])
     ->middleware('auth')
     ->name('reports');
 
-    Route::get('/report/generate', [HomeController::class, 'generateReport'])
-        ->middleware('auth')
-        ->name('report.generate');
+Route::get('/report/generate', [HomeController::class, 'generateReport'])
+    ->middleware('auth')
+    ->name('report.generate');
 
 Route::get('/login', [AuthController::class, 'login']);
 Route::post('/login', [AuthController::class, 'userLogin'])->name('login');
@@ -125,13 +125,13 @@ Route::controller(OrderController::class)->group(function () {
     Route::get('/delivery/proof/{order}', 'deliveryProof')
         ->middleware('auth')
         ->name('delivery_proof');
-    
+
     Route::get('/order/receipt/gen/{order}', 'receiptGen')
         ->name('order_receipt')
         ->can('update', User::class);
 });
 
-Route::controller(IncomingDeliveryController::class)->group(function() {
+Route::controller(IncomingDeliveryController::class)->group(function () {
     Route::get('/incoming', 'index')
         ->name('incoming')
         ->can('viewAny', User::class);
@@ -143,7 +143,7 @@ Route::controller(IncomingDeliveryController::class)->group(function() {
     Route::post('/incoming/add', 'store')
         ->name('incoming_store')
         ->can('create', User::class);
-    
+
     Route::get('/incoming/deliver/{delivery}', 'success')
         ->name('incoming_deliver')
         ->can('update', User::class);
@@ -151,7 +151,7 @@ Route::controller(IncomingDeliveryController::class)->group(function() {
     Route::get('/incoming/cancel/{delivery}', 'cancel')
         ->name('incoming_cancel')
         ->can('update', User::class);
-    
+
     Route::get('/incoming/deliverbatch/{batchId}', 'deliverBatch')
         ->name('incoming_deliver_batch')
         ->can('update', User::class);
@@ -159,7 +159,7 @@ Route::controller(IncomingDeliveryController::class)->group(function() {
     Route::get('/incoming/cancelbatch/{batchId}', 'cancelBatch')
         ->name('incoming_cancel_batch')
         ->can('update', User::class);
-    
+
     Route::get('/incoming/reciept/{batchId}', 'receipt')
         ->name('incoming_receipt')
         ->can('update', User::class);
@@ -258,13 +258,24 @@ Route::controller(WarehouseSectionController::class)->group(function () {
 });
 
 Route::controller(DistributorController::class)
-    ->group(function() {
-        Route::get('/distributor', 'index')->name('distributor');
+    ->group(function () {
+        Route::get('/distributor', 'index')
+            ->name('distributor')
+            ->can('viewAny', User::class);
 
-        Route::post('/distributor/store', 'store')->name('distributor.store');
+        Route::post('/distributor/store', 'store')
+            ->name('distributor.store')
+            ->can('viewAny', User::class);
 
-        Route::get('/distributor/edit/{distributor}', 'edit')->name('distributor.edit');
-        Route::post('/distributor/update/{distributor}', 'update')->name('distributor.update');
+        Route::get('/distributor/edit/{distributor}', 'edit')
+            ->name('distributor.edit')
+            ->can('viewAny', User::class);
 
-        Route::post('/distributor/destroy/{distributor}', 'destroy')->name('distributor.destroy');
+        Route::post('/distributor/update/{distributor}', 'update')
+            ->name('distributor.update')
+            ->can('viewAny', User::class);
+
+        Route::post('/distributor/destroy/{distributor}', 'destroy')
+            ->name('distributor.destroy')
+            ->can('viewAny', User::class);
     });

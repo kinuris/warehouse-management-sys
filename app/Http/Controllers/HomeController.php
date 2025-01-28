@@ -25,6 +25,10 @@ class HomeController extends Controller
     {
         $records = Order::query();
 
+        if ($records->count() === 0) {
+           return back()->with('message', 'No sales yet, cannot generate a report.'); 
+        }
+
         $start = request()->query('start');
         $end = request()->query('end');
 
