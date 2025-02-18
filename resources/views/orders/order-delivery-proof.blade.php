@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold mb-8 text-gray-800">Order Delivery Confirmation #{{ $record->order_id }}</h1>
+        <h1 class="text-3xl font-bold mb-8 text-gray-800 mt-12 md:mt-0">Order Delivery Confirmation #{{ $record->order_id }}</h1>
         
         <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
             <div class="grid md:grid-cols-2 gap-8">

@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     public function index()
     {
+        if (Auth::user()->employee_role_id !== null) {
+            return redirect()->route('deliveries');
+        }
+
         $pastRecords = array();
 
         for ($i = 0; $i < 7; $i++) {

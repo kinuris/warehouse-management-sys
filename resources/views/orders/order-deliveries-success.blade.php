@@ -1,10 +1,13 @@
 @extends('layouts.app')
 
+@section('title', 'Successful Deliveries')
+
 @section('content')
 <div class="container">
-    <h1 class="text-3xl font-bold mb-6">Successful Deliveries</h1>
+    <h1 class="text-3xl font-bold mb-6 mt-16 md:mt-0">Successful Deliveries</h1>
 
-    <div class="table-responsive">
+    <!-- Desktop version (hidden on mobile) -->
+    <div class="hidden md:block">
         <table class="min-w-full bg-white border border-gray-200">
             <thead>
                 <tr>
@@ -37,6 +40,37 @@
                 @endif
             </tbody>
         </table>
+    </div>
+
+    <!-- Mobile version (hidden on desktop) -->
+    <div class="md:hidden">
+        @if(count($success) === 0)
+            <p class="text-center py-4">(No Pending Deliveries)</p>
+        @else
+            @foreach($success as $order)
+            <div class="bg-white border border-gray-200 rounded-lg mb-4 p-4">
+                <div class="mb-2">
+                    <span class="font-bold">Order ID:</span> {{ $order->id }}
+                </div>
+                <div class="mb-2">
+                    <span class="font-bold">Client:</span> {{ $order->client_name }}
+                    <br>
+                    <span class="font-bold">Phone:</span> {{ $order->client_phone }}
+                </div>
+                <div class="mb-2">
+                    <span class="font-bold">Address:</span>
+                    <br>
+                    {{ $order->address }}
+                </div>
+                <div class="mb-4">
+                    <span class="font-bold">Delivery Time:</span>
+                    <br>
+                    {{ $order->delivery_time }}
+                </div>
+                <a href="{{ route('delivery_proof', ['order' => $order->id]) }}" class="block w-full text-center bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">View Proof</a>
+            </div>
+            @endforeach
+        @endif
     </div>
 </div>
 @endsection

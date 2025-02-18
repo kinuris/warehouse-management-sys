@@ -2,6 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "dev:host": "vite --host=192.168.160.7",
         "dev": "vite",
         "build": "vite build"
     },

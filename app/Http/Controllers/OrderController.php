@@ -146,9 +146,6 @@ class OrderController extends Controller
 
         Session::put('orderStage', []);
 
-        if ($walkIn) {
-        }
-
         return redirect()->route('orders')->with('message', 'Order created successfully');
     }
 
@@ -188,12 +185,16 @@ class OrderController extends Controller
             return redirect()->route('deliveries')->with('message', 'Order already delivered');
         }
 
+        $file = $request->file('proof');
+
         $validated = $request->validate([
-            'proof' => ['required', 'image', 'mimes:jpg,png,jpeg'],
+            'proof' => ['required', 'image'],
             'delivery_time' => ['required', 'date'],
         ]);
 
-        $filename = sha1(time()) . '.' . $validated['proof']->extension();
+        $filename = sha1(time()) . '.' . $request->file('proof')
+            ->extension();
+            
         $validated['image_link'] = $filename;
         $validated['order_id'] = $order->id;
 
@@ -224,7 +225,7 @@ class OrderController extends Controller
 
     public function deliveriesSuccess()
     {
-        $success = Order::success();
+        $success = collect(Order::success())->sortByDesc('created_at');
 
         return view('orders.order-deliveries-success')
             ->with('success', $success);
