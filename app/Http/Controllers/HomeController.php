@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        if (Auth::user()->employee_role_id !== null) {
+        if (Auth::user()->system_role_id === 3) {
             return redirect()->route('deliveries');
         }
 
