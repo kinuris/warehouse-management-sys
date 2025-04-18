@@ -50,4 +50,9 @@ class HomeController extends Controller
         return view('report')
             ->with('orders', $records);
     }
+    
+    public function reportsIndex()
+    {
+        return view('reports.index');
+    }
 }

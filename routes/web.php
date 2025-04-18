@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseSectionController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InventoryReportController;
 use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,15 @@ Route::get('/', [HomeController::class, 'index'])
 Route::get('/report/generate', [HomeController::class, 'generateReport'])
     ->middleware('auth')
     ->name('report.generate');
+
+// Reports section
+Route::get('/reports', [HomeController::class, 'reportsIndex'])
+    ->middleware('auth')
+    ->name('reports.index');
+
+Route::get('/reports/inventory', [InventoryReportController::class, 'index'])
+    ->name('reports.inventory')
+    ->middleware('auth');
 
 Route::get('/login', [AuthController::class, 'login']);
 Route::post('/login', [AuthController::class, 'userLogin'])->name('login');
