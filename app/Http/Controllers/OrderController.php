@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\DeliveryRecord;
 use App\Models\EmployeeTaskQueue;
 use App\Models\Order;
@@ -17,7 +18,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::all();
+        // Eager load customer relationship
+        $orders = Order::with('customer')->get();
 
         return view('orders.order-management')->with('orders', $orders);
     }
@@ -48,9 +50,13 @@ class OrderController extends Controller
             }
         }
 
+        // Get customers for selection
+        $customers = Customer::orderBy('name')->get();
+
         return view('orders.order-walkin-add')
-            ->with('products', $products->paginate(5))
-            ->with('totalPrice', $totalPrice);
+            ->with('products', $products->paginate(10))
+            ->with('totalPrice', $totalPrice)
+            ->with('customers', $customers);
     }
 
     /**
@@ -82,9 +88,13 @@ class OrderController extends Controller
             }
         }
 
+        // Get customers for selection
+        $customers = Customer::orderBy('name')->get();
+
         return view('orders.order-add')
-            ->with('products', $products->paginate(5))
-            ->with('totalPrice', $totalPrice);
+            ->with('products', $products->paginate(10))
+            ->with('totalPrice', $totalPrice)
+            ->with('customers', $customers);
     }
 
     /**
@@ -94,29 +104,25 @@ class OrderController extends Controller
     {
         $walkIn = $request->has('walk_in');
 
+        // Adjusted validation for customer relationship
         if ($walkIn) {
             $validated = $request->validate([
-                'name' => ['required'],
-                'phone' => ['required', 'min:11', 'max:11'],
-                'address' => ['nullable'],
-                'delivery_time' => ['nullable', 'date', 'after:now'],
+                'customer_id' => ['required', 'exists:customers,id'],
+                'delivery_time' => ['nullable', 'date'],
             ]);
+
+            $validated['is_walk_in'] = true;
+            
+            // Set delivery time for walk-ins if not provided
+            if (empty($validated['delivery_time'])) {
+                $validated['delivery_time'] = now();
+            }
         } else {
             $validated = $request->validate([
-                'name' => ['required'],
-                'phone' => ['required', 'min:11', 'max:11'],
-                'address' => ['required'],
-                'delivery_time' => ['required', 'date', 'after:now']
+                'customer_id' => ['required', 'exists:customers,id'],
+                'delivery_time' => ['required', 'date', 'after:now'],
             ]);
         }
-
-        if ($walkIn) {
-            $validated['address'] = '(Walk-in Order)';
-            $validated['delivery_time'] = date_create()->format('Y-m-d\TH:i');
-        }
-
-        $validated['client_name'] = $validated['name'];
-        $validated['client_phone'] = $validated['phone'];
 
         $stage = Session::get('orderStage');
 
@@ -131,7 +137,9 @@ class OrderController extends Controller
             }
         }
 
+        // Create order with customer_id
         $order = Order::query()->create($validated);
+
         foreach ($stage as $productId => $quantity) {
             $product = Product::find($productId);
 
@@ -154,6 +162,9 @@ class OrderController extends Controller
      */
     public function itemView(Order $order)
     {
+        // Eager load customer relationship
+        $order->load('customer');
+        
         $orderItems = OrderItem::query()
             ->where('order_id', $order->id)
             ->get();
@@ -211,13 +222,17 @@ class OrderController extends Controller
             return redirect()->route('deliveries')->with('message', 'Order already delivered');
         }
 
+        // Eager load customer for delivery view
+        $order->load('customer');
+
         return view('orders.delivery-add')
             ->with('order', $order);
     }
 
     public function deliveries()
     {
-        $pending = Order::notDelivered();
+        // Eager load customer for pending deliveries
+        $pending = collect(Order::with('customer')->notDelivered());
 
         return view('orders.order-deliveries')
             ->with('pending', $pending);
@@ -225,7 +240,8 @@ class OrderController extends Controller
 
     public function deliveriesSuccess()
     {
-        $success = collect(Order::success())->sortByDesc('created_at');
+        // Eager load customer for successful deliveries
+        $success = collect(Order::with('customer')->success())->sortByDesc('created_at');
 
         return view('orders.order-deliveries-success')
             ->with('success', $success);
@@ -237,9 +253,13 @@ class OrderController extends Controller
             return redirect()->route('deliveries')->with('message', 'Order not delivered');
         }
 
+        // Eager load customer
+        $order->load('customer');
         $record = DeliveryRecord::query()->where('order_id', $order->id)->first();
 
-        return view('orders.order-delivery-proof')->with('record', $record);
+        return view('orders.order-delivery-proof')
+            ->with('record', $record)
+            ->with('order', $order);
     }
 
     /**
@@ -260,6 +280,8 @@ class OrderController extends Controller
 
     public function delete(Order $order)
     {
+        // Eager load customer
+        $order->load('customer');
         return view('orders.order-delete')->with('order', $order);
     }
 
@@ -342,6 +364,14 @@ class OrderController extends Controller
 
     public function receiptGen(Order $order)
     {
+        // Eager load customer relationship for receipt generation
+        $order->load('customer');
         return view('orders.receipt-gen')->with('order', $order);
+    }
+
+    // Update the uniqueClientNames method to work with Customer model
+    public static function uniqueClientNames()
+    {
+        return Customer::orderBy('name')->get(['id', 'name', 'phone', 'address']);
     }
 }

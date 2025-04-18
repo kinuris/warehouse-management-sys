@@ -5,6 +5,7 @@ namespace App\Models;
 use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Order extends Model
 {
@@ -13,23 +14,46 @@ class Order extends Model
     protected $table = 'orders';
 
     protected $fillable = [
-        'client_name',
-        'client_phone',
-        'address',
+        'customer_id',
         'delivery_time',
         'is_cancelled',
+        'is_walk_in', // Added is_walk_in field
     ];
+
+    public function getAddressAttribute()
+    {
+        return $this->customer->address;
+    }
+
+
+    public function getClientNameAttribute()
+    {
+        return $this->customer->name;
+    }
+
+    public function getClientPhoneAttribute()
+    {
+        return $this->customer->phone;
+    }
+
+    /**
+     * Get the customer that owns the order.
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
 
     public static function uniqueClientNames()
     {
-        return Order::query()
-            ->get()
-            ->unique('client_name');
+        // Returning unique customer names associated with orders for now
+        return Customer::whereHas('orders')->distinct()->pluck('name');
     }
 
     public function isWalkIn()
     {
-        return $this->address === '(Walk-in Order)';
+        // Check the is_walk_in flag first, fallback to customer_id check for backward compatibility
+        return $this->is_walk_in || is_null($this->customer_id);
     }
 
     public function getItemsAndQuantity()
@@ -113,9 +137,6 @@ class Order extends Model
 
     public static function pastDay(int $dayOffset = 0)
     {
-        // $upper = date_create('now')->sub(new DateInterval('P' . $dayOffset . 'D'))->format('Y-m-d');
-        // $lower = date_create($upper)->sub(new DateInterval('P1D'))->format('Y-m-d');
-
         $now = date_create('now')->format('Y-m-d H:i:s');
 
         if ($dayOffset > 0) {

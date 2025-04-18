@@ -17,7 +17,7 @@
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <!-- <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet"> -->
     <link rel="shortcut icon" href="{{ asset('assets/favicon.ico') }}" type="image/x-icon">
 
     <!-- Scripts -->
@@ -179,6 +179,17 @@
                         </div>
                     </li>
                     @endguest
+
+                    {{-- Add Customer Link --}}
+                    @auth {{-- Assuming only authenticated users can see this --}}
+                        <li>
+                            <a href="{{ route('customer.index') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                                <i class="bi bi-people-fill mr-3"></i>
+                                <span>Customers</span>
+                            </a>
+                        </li>
+                    @endauth
+                    {{-- End Add Customer Link --}}
                 </ul>
             </div>
         </nav>

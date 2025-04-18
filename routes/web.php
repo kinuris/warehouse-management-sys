@@ -10,6 +10,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseSectionController;
+use App\Http\Controllers\CustomerController;
 use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Support\Facades\Route;
@@ -279,3 +280,5 @@ Route::controller(DistributorController::class)
             ->name('distributor.destroy')
             ->can('viewAny', User::class);
     });
+
+Route::resource('customer', CustomerController::class)->middleware('auth');

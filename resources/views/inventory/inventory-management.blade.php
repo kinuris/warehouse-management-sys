@@ -1,20 +1,26 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-6 min-h-screen" style="position: relative;">
-    <!-- Header Section with improved spacing and grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <div class="lg:col-span-2">
-            <h1 class="text-3xl font-bold text-gray-800 mb-4">Inventory Management</h1>
-            <form class="flex items-center max-w-xl" action="{{ route('inventory') }}">
-                <input class="w-full px-4 py-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500"
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">
+    <!-- Header Section -->
+    <div class="mb-6">
+        <h1 class="text-4xl font-bold text-gray-800">Inventory Management</h1>
+    </div>
+
+    <!-- Action Bar: Search and Add Button -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <!-- Search Form -->
+        <div class="flex-grow">
+            <form class="flex items-center w-full" action="{{ route('inventory') }}">
+                <label for="search" class="sr-only">Search inventory</label>
+                <input class="flex-grow px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
                     type="text"
                     value="{{ request()->query('search') }}"
                     name="search"
                     id="search"
-                    placeholder="Search inventory...">
-                <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-r transition duration-200 flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    placeholder="Search by name or ID...">
+                <button type="submit" class="inline-flex items-center px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-r-md border border-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                    <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                     Search
@@ -22,11 +28,24 @@
             </form>
         </div>
 
-        <!-- Stats Card with improved styling -->
-        <div class="bg-white rounded-lg p-6 shadow-lg">
+        <!-- Add New Item Button -->
+        <div class="flex-shrink-0">
+            <a href="{{ route('inventory_add') }}" class="w-full md:w-auto inline-flex items-center justify-center px-5 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
+                <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add New Item
+            </a>
+        </div>
+    </div>
+
+    <!-- Summary Section: Today's Outgoing Items -->
+    <div class="mb-8">
+        <div class="bg-white rounded-lg shadow-md p-5 border border-gray-200">
             <?php
             // Existing PHP code remains the same
             use App\Models\Order;
+            use App\Models\Product;
 
             $orders = Order::query()
                 ->where('created_at', '>=', now()->subDay())
@@ -36,83 +55,105 @@
 
             foreach ($orders as $order) {
                 $itemsAndQuantity = $order->getItemsAndQuantity();
-                foreach ($itemsAndQuantity as [$item, $quantity]) {
-                    if (!isset($totalItemsAndQuantity[$item]))
-                        $totalItemsAndQuantity[$item] = 0;
-                    $totalItemsAndQuantity[$item] += $quantity;
+                foreach ($itemsAndQuantity as [$itemId, $quantity]) {
+                    if (!isset($totalItemsAndQuantity[$itemId]))
+                        $totalItemsAndQuantity[$itemId] = 0;
+                    $totalItemsAndQuantity[$itemId] += $quantity;
                 }
             }
+            // Fetch product names efficiently
+            $productIds = array_keys($totalItemsAndQuantity);
+            $productsInfo = Product::whereIn('id', $productIds)->pluck('name', 'id');
             ?>
-            <h2 class="font-semibold text-gray-800 mb-3 text-lg">Today's Outgoing Items</h2>
+            <h2 class="text-lg font-semibold text-gray-700 mb-3">Today's Outgoing Items</h2>
             <hr class="border-gray-200 mb-4">
-            <div class="max-h-16 overflow-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300">
-                @foreach ($totalItemsAndQuantity as $item => $quantity)
-                @php($item = App\Models\Product::find($item))
-                <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-100 last:border-0">
-                    <span class="text-gray-700">{{ $item->name }}</span>
-                    <span class="font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full">{{ $quantity }}</span>
+            @if (empty($totalItemsAndQuantity))
+                <p class="text-sm text-gray-500">No items shipped today.</p>
+            @else
+                <div class="max-h-24 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                    @foreach ($totalItemsAndQuantity as $itemId => $quantity)
+                    <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-100 last:border-0 last:pb-0 last:mb-0">
+                        <span class="text-sm text-gray-600 truncate pr-2">{{ $productsInfo[$itemId] ?? 'Unknown Item' }}</span>
+                        <span class="text-sm font-medium text-red-600 bg-red-100 px-2.5 py-0.5 rounded-full">{{ $quantity }}</span>
+                    </div>
+                    @endforeach
                 </div>
-                @endforeach
-            </div>
+            @endif
         </div>
     </div>
 
-    <!-- Action Button with improved styling -->
-    <div class="mb-8 flex justify-between items-center">
-        <a href="{{ route('inventory_add') }}" class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200 shadow-md">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            Add Inventory Item
-        </a>
-    </div>
-
-    <!-- Inventory Table with improved styling -->
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <!-- Inventory Table -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
         <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-100">
                     <tr>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">ID</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Name</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Price</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Category</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Quantity</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Total Value</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
-                    @foreach ($products as $product)
-                    <tr class="hover:bg-gray-50 transition duration-150">
-                        <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-700">{{ $product->internal_id }}</td>
-                        <td class="px-3 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ $product->name }}</td>
-                        <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-700">{{ number_format($product->price, 2) }}</td>
-                        <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-700">{{ $product->category->name }}</td>
-                        <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-700">{{ $product->stock_qty }}</td>
-                        <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-700">{{ number_format($product->stock_qty * $product->price, 2) }}</td>
-                        <td class="px-3 py-3 whitespace-nowrap text-sm">
-                            <div class="flex space-x-1">
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse ($products as $product)
+                    <tr class="hover:bg-gray-50 transition duration-150 ease-in-out">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $product->internal_id }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $product->name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${{ number_format($product->price, 2) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $product->category->name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $product->stock_qty }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${{ number_format($product->stock_qty * $product->price, 2) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                             @if ($product->is_suspended)
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                    Suspended
+                                </span>
+                            @else
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    Active
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex items-center space-x-2">
                                 <a href="{{ route('inventory_edit', ['inventory' => $product->id]) }}"
-                                    class="px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-xs">Edit</a>
-                                @if ($product->is_suspended)
+                                   title="Edit"
+                                   class="text-indigo-600 hover:text-indigo-900 transition duration-150 ease-in-out">
+                                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                </a>
                                 <a href="{{ route('inventory_delete', ['inventory' => $product->id]) }}"
-                                    class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs">Allow</a>
-                                @else
-                                <a href="{{ route('inventory_delete', ['inventory' => $product->id]) }}"
-                                    class="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs">Suspend</a>
-                                @endif
+                                   title="{{ $product->is_suspended ? 'Activate' : 'Suspend' }}"
+                                   class="{{ $product->is_suspended ? 'text-green-600 hover:text-green-900' : 'text-red-600 hover:text-red-900' }} transition duration-150 ease-in-out">
+                                    @if ($product->is_suspended)
+                                        {{-- Activate Icon --}}
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                    @else
+                                        {{-- Suspend Icon --}}
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                                    @endif
+                                </a>
                             </div>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="8" class="px-6 py-10 text-center text-sm text-gray-500">
+                            No inventory items found matching your search criteria.
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
-
         </div>
-        <div class="p-2">
+        @if ($products->hasPages())
+        <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
             {{ $products->links('vendor.pagination.tailwind') }}
         </div>
+        @endif
     </div>
 </div>
 @endsection

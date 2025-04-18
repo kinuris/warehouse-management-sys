@@ -6,162 +6,220 @@
     <form class="flex" action="{{ route('order_store') }}" method="post" autocomplete="off">
         @csrf
         <input type="hidden" name="quantity" value="1">
-        <div class="border border-black rounded p-3 pt-2 mr-3 flex-1">
-            <p class="text-xl font-bold">Product Selection (Total: {{ $totalPrice }} PHP)</p>
-            <div class="d-flex">
-                <div class="flex flex-col relative">
-                    <label class="form-label" for="search">Search</label>
-                    <input value="{{ request()->query('search') }}" class="border border-gray-500 p-1 rounded {{ $errors->has('name') ? 'is-invalid' : '' }}" type="text" name="search" id="search">
+        {{-- Product Selection Section --}}
+        <div class="border border-gray-300 rounded p-4 bg-white shadow-sm mr-4 flex-1 flex flex-col">
+            <p class="text-xl font-semibold text-gray-800 mb-4">Product Selection (Total: {{ number_format($totalPrice, 2) }} PHP)</p>
+
+            {{-- Filters --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 items-end">
+                {{-- Search Input --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="search">Search Products</label>
+                    <input value="{{ request()->query('search') }}" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm {{ $errors->has('search') ? 'border-red-500' : '' }}" type="text" name="search" id="search" placeholder="Search by name or ID...">
+                    @if ($errors->has('search'))
+                    <p class="mt-1 text-sm text-red-600">{{ $errors->first('search') }}</p>
+                    @endif
                 </div>
 
-                <div class="flex flex-col mt-2">
-                    <label class="form-label" for="category">Category Filter</label>
-                    <select class="border border-gray-500 p-1 rounded {{ $errors->has('name') ? 'is-invalid' : '' }}" name="category" id="category">
-                        <option value="-1">All Categories</option>
-                        @foreach (App\Models\Category::all() as $category)
-                        <option {{ request()->query('category') == $category->id ? 'selected' : '' }} value="{{ $category->id }}">{{ $category->name }}</option>
+                {{-- Category Filter --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="category">Category</label>
+                    <select class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm {{ $errors->has('category') ? 'border-red-500' : '' }}" name="category" id="category">
+                        <option value="">All Categories</option>
+                        @foreach (App\Models\Category::orderBy('name')->get() as $category)
+                        <option value="{{ $category->id }}" {{ request()->query('category') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
                         @endforeach
                     </select>
+                    @if ($errors->has('category'))
+                    <p class="mt-1 text-sm text-red-600">{{ $errors->first('category') }}</p>
+                    @endif
                 </div>
 
-                <button class="rounded bg-blue-600 text-white p-2 mt-2" type="button" id="filter-btn">Filter</button>
+                {{-- Filter Button --}}
+                <div class="md:col-start-3">
+                    <button class="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 transition-colors" type="button" id="filter-btn">
+                        Apply Filters
+                    </button>
+                </div>
             </div>
-            <div class="table-responsive mt-2">
-                <div class="text-sm text-gray-600 italic my-3">
+
+            {{-- Product Table --}}
+            <div class="flex-1 overflow-y-auto border border-gray-200 rounded mb-4">
+                <div class="text-sm text-gray-600 italic px-4 py-2 bg-gray-50 border-b border-gray-200">
                     Showing {{ $products->firstItem() ?? 0 }} to {{ $products->lastItem() ?? 0 }} of {{ $products->total() }} products
                 </div>
-                <table class="min-w-full bg-white border border-gray-300">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">ID</th>
-                            <th class="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Name</th>
-                            <th class="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Price</th>
-                            <th class="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Stock Qty.</th>
-                            <th class="border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php($stage = Session::get('orderStage') ?? [])
-                        @foreach ($products as $product)
-                        @php($quantity = $stage[$product->id] ?? 0)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="border border-gray-300 px-4 py-2 text-sm text-gray-800">{{ $product->internal_id }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-sm text-gray-800">{{ $product->name }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-sm text-gray-800">{{ number_format($product->price, 2) }} PHP</td>
-                            <td class="border border-gray-300 px-4 py-2 text-sm text-gray-800">
-                                {{ $product->stock_qty }}
-                                @if(isset($stage[$product->id]))
-                                    <span class="{{ ($product->stock_qty - $quantity < 0) ? 'text-red-600' : 'text-blue-600' }} font-medium ml-1">
-                                        ({{ $stage[$product->id] }})
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead class="bg-gray-100 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">ID</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">Name</th>
+                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">Price</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">Stock (Added)</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            @php $stage = Session::get('orderStage') ?? []; @endphp
+                            @forelse ($products as $product)
+                            @php $quantityInStage = $stage[$product->id] ?? 0; @endphp
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">{{ $product->internal_id }}</td>
+                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 font-medium">{{ Str::limit($product->name, 40) }}</td>
+                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 text-right">{{ number_format($product->price, 2) }} PHP</td>
+                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 text-center">
+                                    {{ $product->stock_qty }}
+                                    @if($quantityInStage > 0)
+                                    <span class="{{ ($product->stock_qty - $quantityInStage < 0) ? 'text-red-600' : 'text-blue-600' }} font-semibold ml-1">
+                                        ({{ $quantityInStage }})
                                     </span>
-                                @endif
-                            </td>
-                            <td class="border border-gray-300 px-4 py-2 text-sm">
-                                <div class="flex items-center justify-center gap-1">
-                                    <button type="submit" formaction="{{ route('order_stage_add', ['product' => $product->id]) }}" 
-                                        class="px-3 py-1 bg-blue-500 text-white rounded-l hover:bg-blue-600 transition-colors">+</button>
-                                    <button type="submit" formaction="{{ route('order_stage_sub', ['product' => $product->id]) }}" 
-                                        class="px-3 py-1 bg-gray-500 text-white rounded-r hover:bg-gray-600 transition-colors">−</button>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-2 whitespace-nowrap text-sm text-center">
+                                    <div class="flex items-center justify-center gap-1">
+                                        {{-- Add Button --}}
+                                        <button type="submit" title="Add one" formaction="{{ route('order_stage_add', ['product' => $product->id]) }}"
+                                            class="px-2 py-1 bg-blue-500 text-white rounded-l hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors text-xs"
+                                            {{ $product->stock_qty <= $quantityInStage ? 'disabled' : '' }}>+</button>
+                                        {{-- Subtract Button --}}
+                                        <button type="submit" title="Subtract one" formaction="{{ route('order_stage_sub', ['product' => $product->id]) }}"
+                                            class="px-2 py-1 bg-gray-400 text-white rounded-r hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors text-xs"
+                                            {{ $quantityInStage <= 0 ? 'disabled' : '' }}>-</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="px-4 py-6 text-center text-sm text-gray-500 italic">
+                                    No products found matching your criteria.
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="p-2">
+
+            {{-- Pagination --}}
+            @if ($products->hasPages())
+            <div class="mt-auto pt-4 border-t border-gray-200">
                 {{ $products->withQueryString()->links('vendor.pagination.simple-tailwind') }}
             </div>
+            @endif
         </div>
 
         <div class="flex flex-col min-w-96 max-w-96">
-            <div class="border border-black bg-blue-200 rounded p-3 pt-2 mb-3">
-                <div class="mb-2 hidden">
-                    <p class="m-0 text-lg font-bold">Client Selection</p>
-                    <input class="mr-1" type="checkbox" name="walk_in" id="walk-in">
-                    <label for="walk-in">Walk-in Order?</label>
+            {{-- Customer Selection & Delivery Time Section --}}
+            <div class="border border-gray-300 rounded p-4 bg-white shadow-sm mb-4">
+                <div class="mb-4">
+                    <p class="text-lg font-semibold text-gray-900">Order Details</p>
+                    <p class="text-sm text-gray-600 mt-1">Select the customer and specify the delivery deadline.</p>
                 </div>
+                {{-- Customer Selection --}}
+                <div class="flex flex-col w-full relative mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="customer_id">
+                        Customer <span class="text-red-600">*</span>
+                    </label>
+                    <select
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm {{ $errors->has('customer_id') ? 'border-red-500' : '' }}"
+                        name="customer_id"
+                        id="customer_id">
+                        <option value="">-- Select Customer --</option>
+                        @foreach ($customers as $customer)
+                        <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
+                            {{ $customer->name }} ({{ $customer->phone ?? 'N/A' }})
+                        </option>
+                        @endforeach
+                    </select>
+                    @if ($errors->has('customer_id'))
+                    <p class="mt-1 text-sm text-red-600">
+                        {{ $errors->first('customer_id') }}
+                    </p>
+                    @endif
+                    <div class="mt-2 text-sm">
+                        <a href="{{ route('customer.create') }}?redirect_url={{ urlencode(request()->fullUrl()) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 hover:underline">
+                            Add New Customer
+                        </a>
+                    </div>
+                </div>
+                {{-- Delivery Time --}}
                 <div class="flex flex-col w-full relative">
-                    <label class="form-label" for="name">Client Name:</label>
-                    <div class="relative">
-                        <input class="border border-gray-500 p-1 rounded w-full {{ $errors->has('name') ? 'is-invalid' : '' }}" type="text" value="{{ old('name') }}" name="name" id="name" autocomplete="off">
-                        <button type="button" class="absolute right-2 top-1/2 transform -translate-y-1/2 hidden" id="clearName">✕</button>
-                    </div>
-
-                    <div class="absolute bg-white border border-gray-300 rounded mt-1 w-full max-h-48 overflow-y-auto" style="top: 100%; z-index: 1000;">
-                        <ul id="choices">
-
-                        </ul>
-                    </div>
-                    @if ($errors->has('name'))
-                    <div class="mt-0 text-sm text-red-600">
-                        {{ $errors->first('name') }}
-                    </div>
-                    @endif
-                </div>
-
-                <div class="flex flex-col w-full mt-3">
-                    <label class="form-label" for="tel">Client Phone:</label>
-                    <input maxlength="11" class="border border-gray-500 p-1 rounded {{ $errors->has('phone') ? 'is-invalid' : '' }}" type="tel" value="{{ old('phone') }}" name="phone" id="tel">
-                    @if ($errors->has('phone'))
-                    <div class="mt-0 text-sm text-red-600">
-                        {{ $errors->first('phone') }}
-                    </div>
-                    @endif
-                </div>
-
-                <div class="flex flex-col my-3">
-                    <label class="form-label" for="address">Client Address:</label>
-                    <input class="border border-gray-500 p-1 rounded {{ $errors->has('address') ? 'is-invalid' : '' }}" type="text" value="{{ old('address') }}" name="address" id="address">
-                    @if ($errors->has('address'))
-                    <div class="mt-0 text-sm text-red-600">
-                        {{ $errors->first('address') }}
-                    </div>
-                    @endif
-                </div>
-
-                <div class="flex flex-col my-3">
-                    <label for="time">Delivery Time (Deadline): </label>
-                    <input class="border border-gray-500 p-1 rounded {{ $errors->has('delivery_time') ? 'is-invalid' : '' }}" type="datetime-local" value="{{ old('delivery_time') }}" name="delivery_time" id="time">
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="delivery_time">
+                        Delivery Time (Deadline) <span class="text-red-600">*</span>
+                    </label>
+                    <input
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm {{ $errors->has('delivery_time') ? 'border-red-500' : '' }}"
+                        type="datetime-local"
+                        value="{{ old('delivery_time') }}"
+                        name="delivery_time"
+                        id="delivery_time">
                     @if ($errors->has('delivery_time'))
-                    <div class="mt-0 text-sm text-red-600">
+                    <p class="mt-1 text-sm text-red-600">
                         {{ $errors->first('delivery_time') }}
-                    </div>
+                    </p>
                     @endif
                 </div>
             </div>
-            <div class="border border-black rounded p-3 pt-2 bg-blue-200" style="flex: 2;">
-                <p class="text-lg font-bold">Products Added (Total: {{ $totalPrice }} PHP)</p>
-                <input class="shadow p-1.5 rounded bg-blue-600 text-white my-3" type="submit" value="Issue Order">
-                <div class="table-responsive">
-                    <table class="min-w-full bg-white">
-                        <thead class="bg-gray-100">
-                            <th class="border border-gray-300 py-2 px-3 text-sm font-semibold text-gray-700">Name</th>
-                            <th class="border border-gray-300 py-2 px-3 text-sm font-semibold text-gray-700">Qty</th>
-                            <th class="border border-gray-300 py-2 px-3 text-sm font-semibold text-gray-700">Total</th>
-                            <th class="border border-gray-300 py-2 px-3 text-sm font-semibold text-gray-700">Action</th>
+
+            {{-- Products Added Section --}}
+            <div class="border border-gray-300 rounded p-4 bg-gray-50 shadow-sm flex-1 flex flex-col">
+                <div class="flex justify-between items-center mb-3">
+                    <p class="text-lg font-semibold text-gray-800">Order Summary</p>
+                    <span class="text-lg font-bold text-blue-600">{{ number_format($totalPrice, 2) }} PHP</span>
+                </div>
+
+                {{-- Table for Added Products --}}
+                <div class="overflow-x-auto mb-4 border border-gray-200 rounded max-h-96 overflow-y-auto flex-1">
+                    <table class="w-full bg-white text-sm">
+                        <thead class="bg-gray-100 sticky top-0">
+                            <tr>
+                                <th class="px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">Product</th>
+                                <th class="px-1 py-1 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200 w-12">Qty</th>
+                                <th class="px-2 py-1 text-right text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200 w-20">Total</th>
+                                <th class="px-1 py-1 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200 w-24">Actions</th>
+                            </tr>
                         </thead>
-                        <tbody>
-                            @php($stage = Session::get('orderStage') ?? [])
-                            @foreach (App\Models\Product::all() as $product)
-                            @php($quantity = $stage[$product->id] ?? 0)
-                            @if($quantity > 0)
-                            <tr class="hover:bg-gray-50">
-                                <td class="border border-gray-300 py-2 px-3 text-sm text-gray-800">{{ Str::limit($product->name, 24) }}</td>
-                                <td class="border border-gray-300 py-2 px-3 text-sm text-gray-800">x{{ $quantity }}</td>
-                                <td class="border border-gray-300 py-2 px-3 text-sm text-gray-800">{{ number_format($product->price * $quantity, 2) }} PHP</td>
-                                <td class="border border-gray-300 py-2 px-3 text-sm text-gray-800">
-                                    <div class="flex items-center gap-2">
+                        <tbody class="divide-y divide-gray-200">
+                            @php
+                            $stage = Session::get('orderStage') ?? [];
+                            // Fetch only the products that are actually in the stage for efficiency
+                            $stagedProductIds = array_keys($stage);
+                            $stagedProducts = \App\Models\Product::whereIn('id', $stagedProductIds)->get()->keyBy('id');
+                            @endphp
+
+                            @if(empty($stage))
+                            <tr>
+                                <td colspan="4" class="px-3 py-4 text-center text-sm text-gray-500 italic">No products added yet.</td>
+                            </tr>
+                            @else
+                            @foreach ($stage as $productId => $quantity)
+                            @php
+                            // Get the product details from the pre-fetched collection
+                            $product = $stagedProducts->get($productId);
+                            @endphp
+                            {{-- Ensure product exists and quantity is positive --}}
+                            @if($product && $quantity > 0)
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-700">{{ Str::limit($product->name, 25) }}</td>
+                                <td class="px-3 py-2 text-center text-sm text-gray-700">{{ $quantity }}</td>
+                                <td class="px-3 py-2 text-right text-sm text-gray-700">{{ number_format($product->price * $quantity, 2) }}</td>
+                                <td class="px-3 py-2 text-center text-sm text-gray-700">
+                                    <div class="flex items-center justify-center gap-1">
+                                        {{-- Add/Subtract Buttons --}}
                                         <div class="flex">
-                                            <button type="submit" formaction="{{ route('order_stage_add', ['product' => $product->id]) }}" 
-                                                class="px-2 py-1 bg-blue-500 text-white rounded-l hover:bg-blue-600 transition-colors">+</button>
-                                            <button type="submit" formaction="{{ route('order_stage_sub', ['product' => $product->id]) }}" 
-                                                class="px-2 py-1 bg-gray-500 text-white rounded-r hover:bg-gray-600 transition-colors">-</button>
+                                            <button type="submit" title="Add one" formaction="{{ route('order_stage_add', ['product' => $product->id]) }}"
+                                                class="px-2 py-1 bg-blue-500 text-white rounded-l hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors text-xs"
+                                                {{ $product->stock_qty <= ($stage[$product->id] ?? 0) ? 'disabled' : '' }}>+</button>
+                                            <button type="submit" title="Subtract one" formaction="{{ route('order_stage_sub', ['product' => $product->id]) }}"
+                                                class="px-2 py-1 bg-gray-400 text-white rounded-r hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors text-xs">-</button>
                                         </div>
-                                        <button type="submit" formaction="{{ route('order_stage_remove', ['product' => $product->id]) }}" 
-                                            class="p-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m4-6v.01M5 7V5a2 2 0 012-2h10a2 2 0 012 2v2" />
+                                        {{-- Remove Button --}}
+                                        <button type="submit" title="Remove item" formaction="{{ route('order_stage_remove', ['product' => $product->id]) }}"
+                                            class="p-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V5a1 1 0 00-1-1H9a1 1 0 00-1 1v2M5 7h14" />
                                             </svg>
                                         </button>
                                     </div>
@@ -169,114 +227,46 @@
                             </tr>
                             @endif
                             @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>
+
+                {{-- Issue Order Button --}}
+                <div class="mt-auto">
+                    @if(!empty($stage))
+                    <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition-colors">
+                        Issue Order ({{ number_format($totalPrice, 2) }} PHP)
+                    </button>
+                    @else
+                    <button type="button" disabled class="w-full py-2 px-4 bg-gray-400 text-white font-semibold rounded cursor-not-allowed opacity-75">
+                        Add Products to Order
+                    </button>
+                    @endif
+                </div>
             </div>
         </div>
-
     </form>
 </div>
 @endsection
 
 @section('script')
 <script>
-    const nameInput = document.getElementById('name');
-
-    const names = [
-        <?php
-
-        use App\Models\Order;
-
-        foreach (Order::uniqueClientNames() as $client) : ?> {
-                name: '<?= $client->client_name ?>',
-                phone: '<?= $client->client_phone ?>',
-                address: '<?= $client->address ?>'
-            },
-        <?php endforeach; ?>
-    ];
-
-    const choicesList = document.getElementById('choices');
-    const phoneInput = document.getElementById('tel');
-
-    const clearNameBtn = document.getElementById('clearName');
-    clearNameBtn.addEventListener('click', function() {
-        nameInput.value = '';
-        phoneInput.value = '';
-        address.value = '';
-        this.classList.add('hidden');
-        choicesList.innerHTML = '';
-    });
-
-    nameInput.addEventListener('input', function() {
-        choicesList.innerHTML = '';
-        if (this.value.length === 0) return;
-
-        const clearName = document.getElementById('clearName');
-        if (this.value.length > 0) {
-            clearName.classList.remove('hidden');
-        } else {
-            clearName.classList.add('hidden');
-        }
-
-        const matchingNames = names.filter(person =>
-            person.name.toLowerCase().includes(this.value.toLowerCase())
-        );
-
-        matchingNames.forEach(person => {
-            const li = document.createElement('li');
-            li.textContent = person.name;
-            li.className = 'p-2.5 hover:bg-blue-50 cursor-pointer border-b border-gray-100 text-gray-700 text-sm transition-colors duration-150';
-            li.addEventListener('click', () => {
-                nameInput.value = person.name;
-                phoneInput.value = person.phone;
-                address.value = person.address;
-
-                choicesList.innerHTML = '';
-            });
-            choicesList.appendChild(li);
-        });
-    });
-</script>
-<script>
     const search = document.getElementById('search')
     const category = document.getElementById('category')
     const filterBtn = document.getElementById('filter-btn')
 
     filterBtn.addEventListener('click', function() {
-        window.location.href = "{{ route('order_add') }}?search=" + encodeURI(search.value) + '&category=' + encodeURI(category.value)
+        // Use the correct route for filtering delivery orders
+        window.location.href = "{{ route('order_add') }}?search=" + encodeURIComponent(search.value) + '&category=' + encodeURIComponent(category.value)
     });
-</script>
-<script>
-    const params = new URLSearchParams(window.location.search)
 
-    const delivery = document.getElementById('time')
-    const address = document.getElementById('address')
-    const walkInChk = document.getElementById('walk-in')
-
-    if (params.has('walkin')) {
-        walkInChk.checked = true
-        delivery.disabled = true
-        address.disabled = true
-    }
-
-    walkInChk.addEventListener('change', function() {
-        delivery.disabled = this.checked
-        address.disabled = this.checked
-
-        if (this.checked) {
-            if (!params.has('walkin')) {
-                params.append('walkin', true)
-            }
-
-            window.location.href = "{{ route('order_add') }}" + '?' + params.toString()
-        } else {
-            if (params.has('walkin')) {
-                params.delete('walkin')
-            }
-
-            window.location.href = "{{ route('order_add') }}" + '?' + params.toString()
+    // Optional: Add event listener for Enter key on search input
+    search.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent form submission if inside a form
+            filterBtn.click(); // Trigger the filter button click
         }
-    })
+    });
 </script>
 @endsection
