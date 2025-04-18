@@ -42,12 +42,12 @@ class DatabaseSeeder extends Seeder
             array('name' => '(Foliar Fertilizer 5 L) YaraVita Foliar Fertilizer', 'base_price' => 2240.0, 'profit' => 280.0),
         );
 
-        $fruitSeeds = array(
-            array('name' => '(Mango Seedlings - Carabao Mango (Kalabaw) (Seedlings)) East-West Seed', 'base_price' => 560.0, 'profit' => 280.0),
-            array('name' => '(Mango Seedlings - Grafted mango seedlings available in nurseries) Ramgo Seeds', 'base_price' => 560.0, 'profit' => 280.0),
-            array('name' => '(Papaya 100g - Sinta F1 (Hybrid Papaya)) Known-You Seed', 'base_price' => 168.0, 'profit' => 56.0),
-            array('name' => '(Papaya 100g - Red Lady Papaya, Solo Papaya) Ramgo Seeds', 'base_price' => 168.0, 'profit' => 56.0),
-            array('name' => '(Banana Tissue-cultured - Tissue-cultured varieties (Lakatan, Saba, Cavendish)) East-West Seed', 'base_price' => 560.0, 'profit' => 280.0),
+        $Insecticide = array( 
+            array('name' => 'Decis 2.5 EC Insecticide - Bayer', 'base_price' => 250.0, 'profit' => 100.0),
+            array('name' => 'Karate 2.5 EC Insecticide - Syngenta', 'base_price' => 270.0, 'profit' => 90.0),
+            array('name' => 'Malathion 57% EC - Ramgo', 'base_price' => 180.0, 'profit' => 60.0),
+            array('name' => 'Dibrom Insecticide 100 EC - AMVAC', 'base_price' => 300.0, 'profit' => 120.0),
+            array('name' => 'Sevin 85 S Insecticide - East-West Seed', 'base_price' => 200.0, 'profit' => 80.0),
         );
 
         $herbicides = array(
@@ -74,42 +74,43 @@ class DatabaseSeeder extends Seeder
             array('name' => '(Selective Herbicides) Machete (Syngenta)', 'base_price' => 3920.0, 'profit' => 840.0),
         );
 
-        $irrigationEquipment = array(
-            array('name' => '(Drip Irrigation Systems Various lengths - Drip lines, pressure compensating drippers) Netafim', 'base_price' => 5600.0, 'profit' => 1120.0),
-            array('name' => '(Drip Irrigation Systems N/A - Drip emitters and micro-irrigation systems) Rain Bird', 'base_price' => 5600.0, 'profit' => 1120.0),
-            array('name' => '(Drip Irrigation Systems N/A - Drip tubes and accessories) Jain Irrigation', 'base_price' => 5600.0, 'profit' => 1120.0),
-            array('name' => '(Drip Irrigation Systems N/A - Drip irrigation products for field crops, orchards, and vegetables) Toro', 'base_price' => 5600.0, 'profit' => 1120.0),
-            array('name' => '(Sprinkler Systems N/A - Pop-up sprinklers, rotor sprinklers) Hunter Industries', 'base_price' => 8400.0, 'profit' => 1680.0),
-            array('name' => '(Sprinkler Systems N/A - Sprinklers and rotor systems) Rain Bird', 'base_price' => 8400.0, 'profit' => 1680.0),
-            array('name' => '(Sprinkler Systems N/A - Sprinkler systems for large-scale and small-scale agriculture) Toro', 'base_price' => 8400.0, 'profit' => 1680.0),
-            array('name' => '(Sprinkler Systems N/A - Pivot and rotary sprinklers) Nelson Irrigation', 'base_price' => 8400.0, 'profit' => 1680.0),
-            array('name' => '(Irrigation Controllers N/A - Smart irrigation controllers (Wi-Fi enabled)) Hunter Industries', 'base_price' => 11200.0, 'profit' => 1680.0),
-            array('name' => '(Irrigation Controllers N/A - ESP series, ST8 Wi-Fi Smart Irrigation controllers) Rain Bird', 'base_price' => 11200.0, 'profit' => 1680.0),
-            array('name' => '(Irrigation Controllers N/A - Precision series controllers and timers) Toro', 'base_price' => 11200.0, 'profit' => 1680.0),
-            array('name' => '(Micro-Irrigation Systems N/A - Micro-sprayers, emitters, and micro-irrigation kits) Netafim', 'base_price' => 5600.0, 'profit' => 1120.0),
-            array('name' => '(Micro-Irrigation Systems N/A - Micro tubes, emitters, and sprayers) Jain Irrigation', 'base_price' => 5600.0, 'profit' => 1120.0),
-            array('name' => '(Micro-Irrigation Systems N/A - Mini sprinklers, sprayers, and microjets) Antelco', 'base_price' => 5600.0, 'profit' => 1120.0),
-            array('name' => '(Pumps (For Irrigation) N/A - Solar-powered and electric water pumps) Grundfos', 'base_price' => 14000.0, 'profit' => 2800.0),
-            array('name' => '(Pumps (For Irrigation) N/A - Submersible and solar pumps) Shakti Pumps', 'base_price' => 14000.0, 'profit' => 2800.0),
-            array('name' => '(Pumps (For Irrigation) N/A - Centrifugal and submersible water pumps) Hitachi', 'base_price' => 14000.0, 'profit' => 2800.0),
-            array('name' => '(Pumps (For Irrigation) N/A - Gasoline-powered water pumps) Honda', 'base_price' => 14000.0, 'profit' => 2800.0),
-            array('name' => '(Filters and Fertigation Systems N/A - Sand media filters, screen filters, fertigation systems) Netafim', 'base_price' => 8400.0, 'profit' => 1680.0),
-            array('name' => '(Filters and Fertigation Systems N/A - Filters for drip and sprinkler systems) Azud', 'base_price' => 8400.0, 'profit' => 1680.0),
-            array('name' => '(Filters and Fertigation Systems N/A - Filtration units, fertigation systems) Jain Irrigation', 'base_price' => 8400.0, 'profit' => 1680.0),
-            array('name' => '(Polyethylene Pipes and Fittings Per meter - HDPE pipes and fittings) Atlanta Industries', 'base_price' => 56.0, 'profit' => 11.2),
-            array('name' => '(Polyethylene Pipes and Fittings Per meter - Pipes for irrigation systems) Neltex', 'base_price' => 56.0, 'profit' => 11.2),
-            array('name' => '(Polyethylene Pipes and Fittings Per meter - Pipes used for water supply and irrigation systems) Cobra Pipes', 'base_price' => 56.0, 'profit' => 11.2),
+        $fungicides = array(
+            array('name' => 'Dithane M-45 (1 kg) - Bayer', 'base_price' => 450.0, 'profit' => 150.0),
+            array('name' => 'Ridomil Gold (250 g) - Syngenta', 'base_price' => 380.0, 'profit' => 120.0),
+            array('name' => 'Mancozeb 75 WP (1 kg) - UPL', 'base_price' => 420.0, 'profit' => 140.0),
+            array('name' => 'Folicur 250 EC (100 ml) - Bayer', 'base_price' => 600.0, 'profit' => 200.0),
+            array('name' => 'Score 250 EC (250 ml) - Syngenta', 'base_price' => 720.0, 'profit' => 180.0),
+            array('name' => 'Antracol WP70 (1 kg) - Bayer', 'base_price' => 480.0, 'profit' => 160.0),
+            array('name' => 'Topsin M 70 WP (500 g) - Nippon Soda', 'base_price' => 360.0, 'profit' => 120.0),
+            array('name' => 'SAAF Fungicide (250 g) - UPL', 'base_price' => 300.0, 'profit' => 100.0),
+            array('name' => 'Copper Oxychloride 50 WP (500 g) - Indofil', 'base_price' => 280.0, 'profit' => 90.0),
+            array('name' => 'Nativo 75 WG (100 g) - Bayer', 'base_price' => 850.0, 'profit' => 250.0),
+            array('name' => 'Curzate M8 (250 g) - Dupont', 'base_price' => 390.0, 'profit' => 110.0),
+            array('name' => 'Ziram 76 DF (1 kg) - UPL', 'base_price' => 430.0, 'profit' => 130.0),
+            array('name' => 'Tricyclazole 75 WP (500 g) - Adama', 'base_price' => 370.0, 'profit' => 110.0),
+            array('name' => 'Cabrio Top (250 g) - BASF', 'base_price' => 460.0, 'profit' => 140.0),
+            array('name' => 'Contaf Plus (100 ml) - Willowood', 'base_price' => 210.0, 'profit' => 70.0),
+            array('name' => 'Hexaconazole 5% SC (1 Liter) - Insecticides India', 'base_price' => 550.0, 'profit' => 180.0),
+            array('name' => 'Propiconazole 25% EC (250 ml) - Syngenta', 'base_price' => 600.0, 'profit' => 200.0),
+            array('name' => 'Validamycin 3% L (500 ml) - T-Stanes', 'base_price' => 430.0, 'profit' => 120.0),
+            array('name' => 'Tilt 250 EC (250 ml) - Syngenta', 'base_price' => 700.0, 'profit' => 230.0),
+            array('name' => 'Melody Duo (250 g) - Bayer', 'base_price' => 780.0, 'profit' => 260.0),
+            array('name' => 'Amistar Top (250 ml) - Syngenta', 'base_price' => 950.0, 'profit' => 300.0),
+            array('name' => 'Trichoderma viride Bio-Fungicide (1 kg) - Agrinos', 'base_price' => 350.0, 'profit' => 100.0),
+            array('name' => 'Sulfur 80% WDG (1 kg) - Indofil', 'base_price' => 280.0, 'profit' => 90.0),
         );
+        
 
-        $leafyGreens = array(
-            array('name' => '(Lettuce 10g - Green Ice, Red Rapid, Romaine) East-West Seed', 'base_price' => 168.0, 'profit' => 56.0),
-            array('name' => '(Lettuce 10g - Grand Rapids, Red Sails) Known-You Seed', 'base_price' => 168.0, 'profit' => 56.0),
-            array('name' => '(Lettuce 10g - Cos Lettuce, Looseleaf Lettuce) Ramgo Seeds', 'base_price' => 168.0, 'profit' => 56.0),
-            array('name' => '(Kangkong (Water Spinach) 10g - Upland, Lowland Kangkong) East-West Seed', 'base_price' => 168.0, 'profit' => 56.0),
-            array('name' => '(Kangkong (Water Spinach) 10g - Upland Kangkong) Ramgo Seeds', 'base_price' => 168.0, 'profit' => 56.0),
-            array('name' => '(Basil and Other Herbs 10g - Basil, Dill, Oregano) Ramgo Seeds', 'base_price' => 168.0, 'profit' => 56.0),
-            array('name' => '(Basil and Other Herbs 10g - Sweet Basil, Thai Basil) East-West Seed', 'base_price' => 168.0, 'profit' => 56.0),
+        $molliride = array(
+            array('name' => 'Metaldehyde 5% Pellet (1 kg) - Bayer', 'base_price' => 320.0, 'profit' => 80.0),
+            array('name' => 'Sluggo Molluscicide (500 g) - Neudorff', 'base_price' => 280.0, 'profit' => 70.0),
+            array('name' => 'Deadline M-Ps (1 kg) - AMVAC', 'base_price' => 350.0, 'profit' => 90.0),
+            array('name' => 'Ferric Phosphate 1% Granule (1 kg) - Certis', 'base_price' => 300.0, 'profit' => 75.0),
+            array('name' => 'Ortho Bug-Geta Snail & Slug Killer (1 lb / ~454g) - Scotts', 'base_price' => 250.0, 'profit' => 60.0),
+            array('name' => 'Slug Bait 4% Metaldehyde (500 g) - Ramgo Agro', 'base_price' => 260.0, 'profit' => 65.0),
+            array('name' => 'Snail Buster (1 kg) - East-West Agro', 'base_price' => 340.0, 'profit' => 85.0),
         );
+        
 
         $vegetableSeeds = array(
             array('name' => '(Tomato Seeds 10g - Diamante Max, Tinago, Red Jewel) East-West Seed', 'base_price' => 168.0, 'profit' => 56.0),
@@ -181,12 +182,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $categories = [
-            "Fertilizers",
-            "Fruit Seeds",
+            "Fertilizer",
+            "Insecticide",
             "Herbicides",
-            "Irrigation Equipment",
-            "Leafy Greens",
-            "Vegetable Seeds",
+            "Fungicide",
+            "Molliride",
+            "others",
         ];
 
         foreach ($categories as $category) {
@@ -199,7 +200,7 @@ class DatabaseSeeder extends Seeder
                 'name' => $fertilizer['name'],
                 'stock_qty' => 100,
                 'is_suspended' => false,
-                'category_id' => Category::query()->where('name', '=', 'Fertilizers')->first()->id,
+                'category_id' => Category::query()->where('name', '=', 'Fertilizer')->first()->id,
             ]);
 
             ItemOverhead::query()->create([
@@ -209,13 +210,13 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        foreach ($fruitSeeds as $seed) {
+        foreach ($Insecticide as $seed) {
             $product = Product::query()->create([
                 'internal_id' => 'SBP-' . Product::getNoCollisionID(),
                 'name' => $seed['name'],
                 'stock_qty' => 100,
                 'is_suspended' => false,
-                'category_id' => Category::query()->where('name', '=', 'Fruit Seeds')->first()->id,
+                'category_id' => Category::query()->where('name', '=', 'Insecticide')->first()->id,
             ]);
 
             ItemOverhead::query()->create([
@@ -241,13 +242,13 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        foreach ($irrigationEquipment as $equipment) {
+        foreach ($fungicides as $equipment) {
             $product = Product::query()->create([
                 'internal_id' => 'SBP-' . Product::getNoCollisionID(),
                 'name' => $equipment['name'],
                 'stock_qty' => 100,
                 'is_suspended' => false,
-                'category_id' => Category::query()->where('name', '=', 'Irrigation Equipment')->first()->id,
+                'category_id' => Category::query()->where('name', '=', 'Fungicide')->first()->id,
             ]);
 
             ItemOverhead::query()->create([
@@ -257,13 +258,13 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        foreach ($leafyGreens as $green) {
+        foreach ($molliride as $green) {
             $product = Product::query()->create([
                 'internal_id' => 'SBP-' . Product::getNoCollisionID(),
                 'name' => $green['name'],
                 'stock_qty' => 100,
                 'is_suspended' => false,
-                'category_id' => Category::query()->where('name', '=', 'Leafy Greens')->first()->id,
+                'category_id' => Category::query()->where('name', '=', 'Molliride')->first()->id,
             ]);
 
             ItemOverhead::query()->create([
@@ -279,7 +280,7 @@ class DatabaseSeeder extends Seeder
                 'name' => $seed['name'],
                 'stock_qty' => 100,
                 'is_suspended' => false,
-                'category_id' => Category::query()->where('name', '=', 'Vegetable Seeds')->first()->id,
+                'category_id' => Category::query()->where('name', '=', 'others')->first()->id,
             ]);
 
             ItemOverhead::query()->create([
@@ -312,22 +313,5 @@ class DatabaseSeeder extends Seeder
             'system_role_id' => $admin_role->id,
             'employee_role_id' => $emp_role->id,
         ]);
-
-        // Product::factory(50)->create();
-        // function generateRandomFloat($min, $max)
-        // {
-        //     return $min + mt_rand() / mt_getrandmax() * ($max - $min);
-        // }
-
-        // foreach (Product::all() as $product) {
-        //     $base = generateRandomFloat(100, 30);
-        //     $profit = generateRandomFloat(100, 30);
-
-        //     ItemOverhead::query()->create([
-        //         'base' => $base,
-        //         'profit' => $profit,
-        //         'product_id' => $product->id,
-        //     ]);
-        // }
     }
 }
