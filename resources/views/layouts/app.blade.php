@@ -117,6 +117,12 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('customer.index') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
+                            <i class="bi bi-people-fill mr-3"></i>
+                            <span>Customers</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('reports') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
                             <i class="bi bi-file-earmark-text mr-3"></i>
                             <span>Summary and Reports</span>
@@ -180,16 +186,6 @@
                     </li>
                     @endguest
 
-                    {{-- Add Customer Link --}}
-                    @auth {{-- Assuming only authenticated users can see this --}}
-                        <li>
-                            <a href="{{ route('customer.index') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-all">
-                                <i class="bi bi-people-fill mr-3"></i>
-                                <span>Customers</span>
-                            </a>
-                        </li>
-                    @endauth
-                    {{-- End Add Customer Link --}}
                 </ul>
             </div>
         </nav>

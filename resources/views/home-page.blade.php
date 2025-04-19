@@ -40,71 +40,75 @@
     </div>
 
     <!-- Reports Section -->
+    <!-- Reports & Analytics Section -->
     <div class="mb-12">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Reports & Analytics</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Sales Report Card -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-200">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-6">Reports & Analytics</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <!-- Sales Performance Report Card -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300">
                 <div class="p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    <div class="flex items-start mb-4">
+                        <div class="flex-shrink-0 p-3 rounded-full bg-indigo-100 text-indigo-600 mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
                         </div>
-                        <h2 class="text-2xl font-bold text-gray-800">Sales Performance Report</h2>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-1">Sales Performance Report</h3>
+                            <p class="text-sm text-gray-600">Generate detailed sales reports for specific date ranges, analyzing revenue, profit, and top products.</p>
+                        </div>
                     </div>
-                    
-                    <p class="text-gray-600 mb-6">Generate detailed sales reports with revenue, profit analysis, and top-performing products for any date range.</p>
-                    
-                    <form class="mb-4" action="{{ route('report.generate') }}">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div class="col-span-1">
-                                <label for="start" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                                <input type="date" id="start" name="start" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+
+                    <form class="mt-6 space-y-4" action="{{ route('report.generate') }}" method="GET">
+                        @csrf {{-- Optional: Include CSRF for potential future method changes --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="sales_start_date" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                <input type="date" id="sales_start_date" name="start" class="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out">
                             </div>
-                            <div class="col-span-1">
-                                <label for="end" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                                <input type="date" id="end" name="end" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                            <div>
+                                <label for="sales_end_date" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                <input type="date" id="sales_end_date" name="end" class="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out">
                             </div>
-                            <div class="col-span-1 flex items-end">
-                                <button type="submit" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-sm transition duration-150 ease-in-out">
-                                    Generate Report
-                                </button>
-                            </div>
+                        </div>
+                        <div class="flex justify-end pt-2">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:border-indigo-800 focus:ring focus:ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                Generate Report
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
-            
-            <!-- Inventory Report Card -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-200">
-                <div class="p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+
+            <!-- Inventory Status Report Card -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300">
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex items-start mb-4">
+                        <div class="flex-shrink-0 p-3 rounded-full bg-teal-100 text-teal-600 mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                             </svg>
                         </div>
-                        <h2 class="text-2xl font-bold text-gray-800">Inventory Status Report</h2>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-1">Inventory Status Report</h3>
+                            <p class="text-sm text-gray-600">Access comprehensive inventory data including stock levels, valuation, low stock alerts, and category breakdowns.</p>
+                        </div>
                     </div>
-                    
-                    <p class="text-gray-600 mb-6">View comprehensive inventory status including stock levels, values, low stock alerts, and category-based analysis.</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div class="col-span-1">
-                            <a href="{{ route('reports.inventory') }}" class="block w-full py-2 px-4 text-center bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow-sm transition duration-150 ease-in-out">
-                                View Full Report
-                            </a>
-                        </div>
-                        <div class="col-span-1">
-                            <a href="{{ route('reports.inventory') }}?low_stock=1" class="block w-full py-2 px-4 text-center bg-red-600 hover:bg-red-700 text-white font-medium rounded-md shadow-sm transition duration-150 ease-in-out">
-                                Low Stock Only
-                            </a>
-                        </div>
+
+                    <div class="flex-1"></div>
+
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                         <a href="{{ route('reports.inventory') }}" class="inline-flex items-center justify-center px-4 py-2 bg-teal-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-teal-700 active:bg-teal-800 focus:outline-none focus:border-teal-800 focus:ring focus:ring-teal-300 disabled:opacity-25 transition ease-in-out duration-150">
+                            View Full Report
+                        </a>
+                         <a href="{{ route('reports.inventory') }}?low_stock=1" class="inline-flex items-center justify-center px-4 py-2 bg-orange-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-orange-700 active:bg-orange-800 focus:outline-none focus:border-orange-800 focus:ring focus:ring-orange-300 disabled:opacity-25 transition ease-in-out duration-150">
+                            View Low Stock
+                        </a>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
