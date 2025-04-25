@@ -105,6 +105,11 @@ Route::controller(OrderController::class)->group(function () {
         ->name('order_stage_remove')
         ->can('create', User::class);
 
+    Route::get('/order/find-by-barcode', 'findProductByBarcode')
+        ->name('order_find_by_barcode')
+        ->middleware('auth') // Ensure user is logged in
+        ->can('create', User::class); // Use appropriate authorization
+
     Route::get('/order/delete/{order}', 'delete')
         ->middleware('auth')
         ->name('order_delete');

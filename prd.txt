@@ -1,0 +1,552 @@
+# Warehouse Management System - Product Requirements Document
+
+## 1. Product Overview
+
+The Warehouse Management System (WMS) is a comprehensive solution designed to streamline and optimize warehouse operations for agricultural supply businesses. The system manages inventory, tracks products across warehouse sections, processes orders, handles incoming and outgoing deliveries, and monitors employee attendance.
+
+## 2. System Architecture
+
+The application is built using the Laravel PHP framework with a Model-View-Controller (MVC) architecture. It uses:
+- Laravel's Eloquent ORM for database interactions
+- Blade templating engine for views
+- Authorization policies for access control
+- Route middleware for authentication
+
+## 3. Core Modules
+
+### 3.1 User Management
+
+**Purpose:** Manages system users with different roles and permissions.
+
+**Key Features:**
+- User registration and authentication
+- Role-based access control (employee, admin, etc.)
+- Employee management with internal ID tracking
+- User suspension capabilities
+
+**Data Model:**
+- Users have attributes including internal_id, names, email, phone, role assignments, and password
+- System differentiates between system roles (admin, employee) and employee roles (specific job functions)
+
+### 3.2 Warehouse Management
+
+**Purpose:** Organizes and tracks physical storage locations.
+
+**Key Features:**
+- Warehouse registration and configuration
+- Warehouse sectioning for organized storage
+- Product-to-section mapping
+
+**Data Model:**
+- Warehouses have multiple sections
+- Sections can contain multiple products
+- Products can be stored across multiple warehouse sections
+
+### 3.3 Inventory Management
+
+**Purpose:** Tracks all products and their quantities in the system.
+
+**Key Features:**
+- Product registration with unique internal IDs
+- Stock quantity tracking
+- Category organization
+- Price calculation including overhead and profit margins
+
+**Data Model:**
+- Products have categories, stock quantities, and pricing information
+- Products maintain overhead costs and profit margins
+- Products can be suspended (made inactive)
+
+### 3.4 Order Processing
+
+**Purpose:** Handles customer orders and order fulfillment.
+
+**Key Features:**
+- Order creation (both walk-in and pre-registered customers)
+- Order item management
+- Order status tracking
+- Receipt generation
+- Order delivery scheduling
+
+**Data Model:**
+- Orders contain multiple order items
+- Orders track status through the fulfillment process
+- Receipts are generated for completed orders
+
+### 3.5 Delivery Management
+
+**Purpose:** Manages both incoming deliveries (from suppliers) and outgoing deliveries (to customers).
+
+**Key Features:**
+- Incoming delivery registration and tracking
+- Delivery success/cancellation handling
+- Batch processing for deliveries
+- Proof of delivery management
+
+**Data Model:**
+- Incoming deliveries track expected products and quantities
+- Delivery records maintain status (pending, successful, cancelled)
+- Deliveries can be processed individually or in batches
+
+### 3.6 Employee Attendance
+
+**Purpose:** Tracks employee time-in and time-out records.
+
+**Key Features:**
+- Attendance record creation
+- Time-in and time-out tracking
+- Attendance status monitoring (present, finished duty, no timeout)
+- Attendance reporting with time calculation
+
+**Data Model:**
+- Attendance records link to employee user accounts
+- Records store date, in_time, and out_time
+- System calculates work duration from timestamps
+
+## 4. User Roles and Permissions
+
+The system implements role-based access control with the following primary roles:
+
+1. **Admin:** Full system access including user management
+2. **Employee:** Limited access based on assigned employee role
+3. **Warehouse Manager:** Access to warehouse and inventory management
+4. **Order Processor:** Access to create and manage orders
+
+## 5. Business Rules
+
+1. Product prices are calculated by combining base cost and profit margin
+2. Employee attendance status is determined by comparing record date with current date and timeout status
+3. Orders follow a defined workflow from creation to delivery
+4. Product internal IDs follow a specific format with collision prevention
+5. Warehouse sections organize products for efficient storage and retrieval
+
+## 6. User Interface Requirements
+
+The system uses a web-based interface with:
+- Bootstrap-based responsive design
+- Form validation with error messaging
+- Status indicators for various records (color-coded)
+- Date and time input controls
+- Dropdown selectors for related entities
+
+## 7. Reports and Analytics
+
+The system provides reporting capabilities for:
+- Inventory levels
+- Order status
+- Delivery tracking
+- Employee attendance
+- Generated receipts for orders and deliveries
+
+## 8. Integration Points
+
+The system appears to be designed with potential integration points for:
+- External POS systems
+- Accounting software (for financial data)
+- Supplier management systems
+- Customer relationship management systems
+
+## 9. Data Migration and Seeding
+
+The system includes data seeding capabilities for:
+- Agricultural product categories (fertilizers, seeds, irrigation equipment)
+- Initial user roles and permissions
+- Test data for development and demo purposes
+
+## 10. Security Requirements
+
+The system implements:
+- Password-based authentication
+- Role-based authorization using Laravel policies
+- Input validation to prevent injection attacks
+- Middleware protection for sensitive routes
+
+## 11. Scalability Considerations
+
+The database design supports:
+- Growing product catalogs
+- Multiple warehouses and sections
+- Increasing order volumes
+- Expansion of employee teams
+
+## 12. Maintenance Requirements
+
+The system should be maintained with:
+- Regular database backups
+- Security updates for Laravel framework
+- Performance monitoring for critical operations
+- User feedback collection for improvements
+
+## 13. Project Roadmap
+
+Based on the current implementation, potential future enhancements could include:
+- Mobile application for warehouse staff
+- Barcode/QR code scanning capabilities
+- Advanced analytics and forecasting
+- Customer portal for order tracking
+- Supplier integration for automated incoming delivery processing
+
+---
+
+This document provides a comprehensive overview of the Warehouse Management System's requirements and architecture based on the codebase analysis. The system is particularly tailored for agricultural supply businesses, with specialized product categories and inventory management practices.
+
+kinuris: Generate a product requirements document from this project. Go through each file and figure out its purpose in the grand scheme of the system.
+
+GitHub Copilot: 
+
+kinuris: Generate a product requirements document from this project, generate a bunch of user stories that I can use to regenerate the project from scratch. Go through each file and figure out its purpose in the grand scheme of the system.
+
+GitHub Copilot: I'll generate a comprehensive product requirements document for this warehouse management system by analyzing the available files and understanding their purpose within the system. I'll start by exploring more of the codebase to get a complete picture.I've found 125 PHP files in the project, which confirms this is a Laravel-based warehouse management system. Let me examine the key files to understand the system's components and generate a comprehensive product requirements document with user stories.
+
+Let me first look at the routes file to understand the overall structure and features:I'll now analyze the routes and examine more files to understand the core functionality of the warehouse management system. Based on the web routes file I've examined, I can see the system has several key components including user management, warehouse management, inventory tracking, order processing, delivery management, and employee attendance tracking.
+
+Let me continue by examining some model files to better understand the data structure:I'll continue analyzing the warehouse management system based on the files I've examined. From what I've seen, I can now create a detailed product requirements document with user stories.
+
+# Warehouse Management System - Product Requirements Document
+
+## 1. Executive Summary
+
+The Warehouse Management System (WMS) is a comprehensive solution designed to efficiently manage warehouse operations, inventory control, order processing, delivery management, and employee attendance tracking. The system is built using the Laravel PHP framework and follows an MVC architecture. This document outlines the requirements for recreating the system from scratch.
+
+## 2. System Overview
+
+### 2.1 Core Functionality
+
+The system consists of several integrated modules:
+- User and employee management
+- Warehouse and section management
+- Inventory control
+- Order processing
+- Delivery management (incoming and outgoing)
+- Employee attendance tracking
+- Reporting and analytics
+
+### 2.2 Target Users
+
+- Warehouse managers and administrators
+- Inventory staff
+- Order processing personnel
+- Delivery staff
+- System administrators
+
+## 3. Detailed Module Requirements
+
+### 3.1 User Management
+
+The user management module handles authentication, authorization, and management of system users with different roles and permissions.
+
+**Key Features:**
+- User authentication (login/logout)
+- User registration with role assignment
+- User profile management
+- Role-based access control
+- User suspension functionality
+
+**Data Model:**
+- Users have attributes including internal ID, name components (first, middle, last), email, phone, system role, employee role, and suspension status
+- System differentiates between system roles (admin, employee) and employee-specific roles
+- Each user has a unique internal ID format: 'SB-[RoleCode]-[RandomNumber]'
+
+### 3.2 Warehouse Management
+
+This module organizes physical storage spaces and enables efficient inventory placement.
+
+**Key Features:**
+- Warehouse registration and management
+- Warehouse section creation and organization
+- Product-to-section mapping
+- Section inventory tracking
+
+**Data Model:**
+- Warehouses can have multiple sections
+- Sections can contain multiple products
+- Products can be stored across multiple warehouse sections
+
+### 3.3 Inventory Management
+
+The inventory module tracks all products and their quantities throughout the system.
+
+**Key Features:**
+- Product registration with unique internal IDs
+- Stock quantity tracking
+- Category-based organization
+- Price calculation (base cost + profit margin)
+- Product suspension capability
+
+**Data Model:**
+- Products include internal ID, name, stock quantity, category, and suspension status
+- Each product has associated overhead costs (base cost, profit margin)
+- Products are assigned a unique internal ID format: 'SBP-[RandomNumber]'
+
+### 3.4 Order Processing
+
+Handles the creation and fulfillment of customer orders.
+
+**Key Features:**
+- Order creation (walk-in and delivery)
+- Item selection and quantity management
+- Order status tracking
+- Order cancellation
+- Receipt generation
+
+**Data Model:**
+- Orders track client information, delivery details, and status
+- Order items link products with quantities
+- System calculates profit, tax, and total amounts
+- Orders can be tracked as pending, delivered, late, or cancelled
+
+### 3.5 Delivery Management
+
+Manages both incoming deliveries (from suppliers) and outgoing deliveries (to customers).
+
+**Key Features:**
+- Outgoing delivery scheduling and tracking
+- Incoming delivery registration and receipt
+- Delivery success/cancellation recording
+- Batch delivery processing
+- Delivery proof management
+
+**Data Model:**
+- Delivery records track orders, delivery times, and success status
+- Incoming deliveries track expected products and quantities
+- System tracks on-time vs. late deliveries
+
+### 3.6 Employee Attendance
+
+Tracks employee time-in and time-out records for workforce management.
+
+**Key Features:**
+- Attendance record creation
+- Time-in and time-out tracking
+- Attendance status monitoring (present, finished, no timeout)
+- Work duration calculation
+- Historical attendance reporting
+
+**Data Model:**
+- Attendance records link to employee user accounts
+- Records include date, in_time, and out_time
+- System calculates work duration and status based on timestamps
+
+### 3.7 Reporting and Analytics
+
+Provides insights into system operations and business performance.
+
+**Key Features:**
+- Sales and order reporting
+- Inventory level reporting
+- Employee attendance reporting
+- Profit calculation and financial insights
+- Time-based filtering (day, week, month)
+
+## 4. User Stories
+
+### User Management
+
+1. **User Registration**: "As an administrator, I want to register new users with appropriate roles so that they can access the system with proper permissions."
+   
+2. **User Authentication**: "As a user, I want to securely log in and log out of the system so that I can access my authorized functions."
+   
+3. **User Profile Management**: "As a user, I want to view and update my profile information so that my contact details remain current."
+   
+4. **User Role Assignment**: "As an administrator, I want to assign system and employee roles to users so that they have appropriate access rights."
+   
+5. **User Suspension**: "As an administrator, I want to suspend user accounts when needed so that inactive employees cannot access the system."
+
+### Warehouse Management
+
+6. **Warehouse Registration**: "As a warehouse manager, I want to register new warehouses in the system so that inventory can be properly organized."
+   
+7. **Warehouse Section Creation**: "As a warehouse manager, I want to create sections within warehouses so that products can be organized logically."
+   
+8. **Section-Product Assignment**: "As an inventory manager, I want to assign products to specific warehouse sections so that items can be easily located."
+   
+9. **Section Inventory View**: "As a warehouse staff member, I want to view which products are stored in specific sections so that I can efficiently retrieve items."
+
+### Inventory Management
+
+10. **Product Registration**: "As an inventory manager, I want to register new products with unique IDs so that they can be tracked in the system."
+    
+11. **Stock Quantity Update**: "As an inventory clerk, I want to update stock quantities when products arrive or are sold so that inventory remains accurate."
+    
+12. **Product Categorization**: "As an inventory manager, I want to categorize products so that they can be organized and filtered efficiently."
+    
+13. **Product Pricing**: "As a manager, I want to set base costs and profit margins for products so that pricing is consistent and profitable."
+    
+14. **Product Suspension**: "As an inventory manager, I want to suspend products that are no longer available so they don't appear in active inventory."
+
+### Order Processing
+
+15. **Walk-in Order Creation**: "As a sales clerk, I want to create walk-in orders for customers in the store so their purchases can be processed immediately."
+    
+16. **Delivery Order Creation**: "As a sales clerk, I want to create delivery orders with address and time details so that products can be delivered to customers."
+    
+17. **Order Item Management**: "As a sales clerk, I want to add, update, or remove items from an order before finalizing it so that it accurately reflects customer requests."
+    
+18. **Order Status Tracking**: "As a manager, I want to track the status of all orders so that I know which are pending, delivered, or problematic."
+    
+19. **Order Cancellation**: "As a sales clerk, I want to cancel orders when requested by customers so that inventory can be returned to stock."
+    
+20. **Receipt Generation**: "As a sales clerk, I want to generate receipts for completed orders so that customers have proof of purchase."
+
+### Delivery Management
+
+21. **Outgoing Delivery Scheduling**: "As a delivery coordinator, I want to schedule deliveries for orders so that customers receive their products on time."
+    
+22. **Incoming Delivery Registration**: "As a warehouse staff member, I want to register expected incoming deliveries so that we can prepare for stock arrival."
+    
+23. **Delivery Status Update**: "As a delivery driver, I want to mark deliveries as successful when completed so that the system reflects current status."
+    
+24. **Batch Delivery Processing**: "As a delivery coordinator, I want to process multiple deliveries in a batch so that operations are more efficient."
+    
+25. **Delivery Cancellation**: "As a delivery coordinator, I want to cancel deliveries when necessary so that resources can be reallocated."
+    
+26. **Delivery Proof Management**: "As a delivery driver, I want to record proof of delivery so that there is documentation of successful delivery."
+
+### Employee Attendance
+
+27. **Attendance Record Creation**: "As an HR manager, I want to create attendance records for employees so that work hours are tracked."
+    
+28. **Time-in Recording**: "As an employee, I want to record my time-in when arriving at work so that my attendance is documented."
+    
+29. **Time-out Recording**: "As an employee, I want to record my time-out when leaving work so that my work duration is accurately calculated."
+    
+30. **Attendance Status View**: "As an HR manager, I want to view the attendance status of all employees so that I can monitor workforce presence."
+    
+31. **Work Duration Calculation**: "As an HR manager, I want the system to calculate work durations so that I can track employee work hours."
+    
+32. **Historical Attendance Reporting**: "As an HR manager, I want to generate reports of past attendance so that I can analyze attendance patterns."
+
+### Reporting and Analytics
+
+33. **Sales Reporting**: "As a manager, I want to generate sales reports so that I can analyze business performance."
+    
+34. **Inventory Level Reporting**: "As an inventory manager, I want to view current inventory levels so that I can make restocking decisions."
+    
+35. **Profit Analysis**: "As a financial manager, I want to analyze profit margins by product and order so that I can optimize pricing strategies."
+    
+36. **Time-based Filtering**: "As a manager, I want to filter reports by time periods (day, week, month) so that I can focus on relevant timeframes."
+    
+37. **Employee Performance Metrics**: "As an HR manager, I want to view attendance metrics for employees so that I can evaluate workforce reliability."
+
+## 5. Technical Requirements
+
+### 5.1 Architecture
+
+- Laravel PHP Framework (MVC architecture)
+- MySQL/MariaDB database
+- Blade templating engine for views
+- Laravel's Eloquent ORM for database interactions
+
+### 5.2 Security Requirements
+
+- Authentication using Laravel's built-in mechanisms
+- Authorization using Laravel Policies
+- Input validation to prevent injection attacks
+- CSRF protection
+
+### 5.3 Performance Requirements
+
+- Response time under 2 seconds for all operations
+- Support for concurrent users
+- Efficient database queries using Eloquent relationships
+
+### 5.4 Integration Requirements
+
+- Potential for future integration with accounting systems
+- Potential for future integration with supplier management systems
+
+## 6. File Structure Analysis
+
+The system follows Laravel's standard file structure with customizations:
+
+### 6.1 Models
+
+The models define the data structure and relationships:
+
+- **User.php**: Manages user accounts with internal IDs, system/employee roles, and methods for authentication and permissions
+- **SystemRole.php**: Defines system-level roles (admin, employee)
+- **EmployeeRole.php**: Defines specific job roles for employees
+- **Warehouse.php**: Manages warehouse entities
+- **WarehouseSection.php**: Manages sections within warehouses
+- **WarehouseSectionProduct.php**: Maps products to specific warehouse sections
+- **Product.php**: Tracks products with internal IDs, stock quantities, and pricing logic
+- **Category.php**: Organizes products into categories
+- **ItemOverhead.php**: Manages product pricing components (base cost, profit)
+- **Order.php**: Manages customer orders with status tracking and financial calculations
+- **OrderItem.php**: Links products and quantities to specific orders
+- **DeliveryRecord.php**: Tracks outgoing delivery status and proof
+- **IncomingDelivery.php**: Manages expected deliveries from suppliers
+- **EmployeeAttendance.php**: Tracks employee time-in/out with status calculations
+- **EmployeeTaskQueue.php**: Manages assigned tasks for employees
+
+### 6.2 Controllers
+
+Controllers handle HTTP requests and application logic:
+
+- **AuthController.php**: Manages user authentication
+- **UserController.php**: Handles user CRUD operations
+- **WarehouseController.php**: Manages warehouse operations
+- **WarehouseSectionController.php**: Handles warehouse section management
+- **InventoryController.php**: Manages product inventory
+- **OrderController.php**: Processes customer orders
+- **IncomingDeliveryController.php**: Handles supplier deliveries
+- **EmployeeAttendanceController.php**: Manages employee attendance records
+- **HomeController.php**: Handles dashboard and reporting
+
+### 6.3 Migrations
+
+The database structure is defined through migrations:
+
+- User and role tables
+- Warehouse and section tables
+- Product and inventory tables
+- Order and delivery tables
+- Employee attendance tables
+
+### 6.4 Views
+
+The Blade templates provide the user interface:
+
+- Authentication views (login, register)
+- User management views
+- Warehouse management views
+- Inventory views
+- Order processing views
+- Delivery management views
+- Attendance tracking views
+- Reporting views
+
+## 7. Development Roadmap
+
+### Phase 1: Core Infrastructure
+- Database design and migrations
+- User authentication and authorization
+- Basic UI framework
+
+### Phase 2: Inventory Management
+- Warehouse and section management
+- Product management
+- Stock tracking
+
+### Phase 3: Order Processing
+- Order creation and management
+- Order item handling
+- Receipt generation
+
+### Phase 4: Delivery Management
+- Outgoing delivery process
+- Incoming delivery process
+- Delivery status tracking
+
+### Phase 5: Employee Management
+- Employee attendance tracking
+- Task assignment and management
+
+### Phase 6: Reporting and Analytics
+- Sales and inventory reports
+- Performance metrics
+- Financial calculations
+
+## 8. Conclusion
+
+This Product Requirements Document outlines the comprehensive features and functionality needed to recreate the Warehouse Management System. By implementing the user stories and following the technical requirements, a fully functional system can be developed that meets the needs of warehouse operations, inventory management, order processing, and employee tracking.

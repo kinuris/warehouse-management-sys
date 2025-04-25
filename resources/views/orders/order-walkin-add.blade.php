@@ -3,13 +3,24 @@
 @section('content')
 <div class="container">
     <h1 class="text-3xl font-bold mb-3">Issue Walk-in Order</h1>
-    <form class="flex" action="{{ route('order_store') }}" method="post" autocomplete="off">
+    <form class="flex" action="{{ route('order_store') }}" method="post" autocomplete="off" id="order-form">
         @csrf
         <input type="hidden" name="walk_in" value="1">
         <input type="hidden" name="quantity" value="1">
         {{-- Product Selection Section --}}
         <div class="border border-gray-300 rounded p-4 bg-white shadow-sm mr-4 flex-1 flex flex-col">
-            <p class="text-xl font-semibold text-gray-800 mb-4">Product Selection</p>
+            <div class="flex justify-between items-center mb-4">
+                <p class="text-xl font-semibold text-gray-800">Product Selection</p>
+                <button type="button" id="scan-barcode-btn" class="py-2 px-4 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition-colors">
+                    Scan Barcode
+                </button>
+            </div>
+
+            {{-- Barcode Scanner Placeholder --}}
+            <div id="barcode-scanner-container" class="mb-4 hidden">
+                <div id="reader" class="w-full max-w-md mx-auto"></div>
+                <button type="button" id="close-scanner-btn" class="mt-2 py-1 px-3 bg-red-500 text-white rounded hover:bg-red-600">Close Scanner</button>
+            </div>
 
             {{-- Filters --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 items-end">
@@ -231,12 +242,153 @@
 @endsection
 
 @section('script')
+{{-- Include html5-qrcode library --}}
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script>
     const search = document.getElementById('search')
     const category = document.getElementById('category')
     const filterBtn = document.getElementById('filter-btn')
     filterBtn.addEventListener('click', function() {
         window.location.href = "{{ route('order_walkin_add') }}?search=" + encodeURI(search.value) + '&category=' + encodeURI(category.value)
+    });
+
+    // Barcode Scanner Logic (Identical to order-add view)
+    const scanBtn = document.getElementById('scan-barcode-btn');
+    const scannerContainer = document.getElementById('barcode-scanner-container');
+    const closeScannerBtn = document.getElementById('close-scanner-btn');
+    const readerElement = document.getElementById('reader');
+    const orderForm = document.getElementById('order-form');
+    let html5QrCode = null;
+
+    scanBtn.addEventListener('click', () => {
+        scannerContainer.classList.remove('hidden');
+        startScanner();
+    });
+
+    closeScannerBtn.addEventListener('click', () => {
+        stopScanner();
+    });
+
+    function startScanner() {
+        // Ensure the reader element is clean and recreate the instance
+        readerElement.innerHTML = '';
+        html5QrCode = new Html5Qrcode("reader");
+
+        const config = {
+            fps: 10,
+            qrbox: {
+                width: 180,
+                height: 180
+            }
+        };
+
+        html5QrCode.start({
+                facingMode: "environment"
+            }, config, onScanSuccess, onScanFailure)
+            .catch(err => {
+                console.error(`Unable to start scanning, error: ${err}`);
+                alert('Error starting scanner. Please ensure camera permissions are granted.');
+                stopScanner();
+            });
+
+        scannerContainer.classList.remove('hidden');
+    }
+
+    function stopScanner() {
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.stop().then(ignore => {
+                console.log("QR Code scanning stopped.");
+            }).catch(err => {
+                console.error("Failed to stop scanning.", err);
+            });
+        }
+        scannerContainer.classList.add('hidden');
+        readerElement.innerHTML = ''; // Clear the reader element
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+        // handle the scanned code as you like, for example:
+        console.log(`Code matched = ${decodedText}`, decodedResult);
+
+        // Don't stop scanner immediately to allow continuous scanning
+        // Instead, temporarily disable scanning while processing
+        html5QrCode.pause();
+
+        // Find product by barcode via AJAX
+        fetch(`{{ route('order_find_by_barcode') }}?barcode=${encodeURIComponent(decodedText)}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Product not found');
+                        });
+                    }
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(product => {
+                console.log('Product found:', product);
+                // Add product to stage by submitting the form with a specific action
+                const addUrl = `/order/stage/${product.id}/add`;
+                const tempForm = document.createElement('form');
+                tempForm.method = 'post';
+                tempForm.action = addUrl;
+
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = '{{ csrf_token() }}'; // Add CSRF token
+                tempForm.appendChild(csrfInput);
+
+                const quantityInput = document.createElement('input');
+                quantityInput.type = 'hidden';
+                quantityInput.name = 'quantity';
+                quantityInput.value = '1'; // Add quantity 1 by default
+                tempForm.appendChild(quantityInput);
+
+                // Add a flag to keep scanner open after redirect
+                const keepScannerOpenInput = document.createElement('input');
+                keepScannerOpenInput.type = 'hidden';
+                keepScannerOpenInput.name = 'keep_scanner_open';
+                keepScannerOpenInput.value = '1';
+                tempForm.appendChild(keepScannerOpenInput);
+
+                document.body.appendChild(tempForm);
+                tempForm.submit();
+            })
+            .catch(error => {
+                console.error('Error finding product:', error);
+                alert(`Error: ${error.message}`);
+                // Resume scanning if there was an error
+                html5QrCode.resume();
+            });
+    }
+
+    function onScanFailure(error) {
+        // console.warn(`Code scan error = ${error}`);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if we should keep the scanner open (from a previous scan)
+        const keepScannerOpen = {
+            {
+                Session::has('keep_scanner_open') ? 'true' : 'false'
+            }
+        };
+        if (keepScannerOpen) {
+            scannerContainer.classList.remove('hidden');
+            startScanner();
+            // Forget the session key after using it so it doesn't persist
+            @php Session::forget('keep_scanner_open');
+            @endphp
+        }
     });
 </script>
 @endsection

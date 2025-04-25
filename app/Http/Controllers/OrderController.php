@@ -297,27 +297,18 @@ class OrderController extends Controller
 
     public function stageAdd(Request $request, Product $product)
     {
-        $validated = $request->validate([
-            'quantity' => ['required', 'min:1'],
-        ]);
+        // Add product to the order stage
+        $qty = $request->quantity ?: 1;
+        $orderStage = Session::get('orderStage', []);
+        $orderStage[$product->id] = ($orderStage[$product->id] ?? 0) + $qty;
+        Session::put('orderStage', $orderStage);
 
-        $stage = Session::get('orderStage');
-
-        if (!$stage) {
-            Session::put('orderStage', [$product->id => $validated['quantity']]);
-
-            return back()->withInput();
+        // Store flag to keep scanner open on redirect if requested
+        if ($request->has('keep_scanner_open')) {
+            Session::flash('keep_scanner_open', true);
         }
 
-        if (array_key_exists($product->id, $stage)) {
-            $stage[$product->id] += $validated['quantity'];
-        } else {
-            $stage[$product->id] = $validated['quantity'];
-        }
-
-        Session::put('orderStage', $stage);
-
-        return back()->withInput();
+        return redirect()->back()->with('success', 'Product added to order.');
     }
 
     public function stageRemove(Request $request, Product $product)
@@ -373,5 +364,32 @@ class OrderController extends Controller
     public static function uniqueClientNames()
     {
         return Customer::orderBy('name')->get(['id', 'name', 'phone', 'address']);
+    }
+
+    /**
+     * Find a product by its barcode.
+     */
+    public function findProductByBarcode(Request $request)
+    {
+        $barcode = $request->input('barcode');
+        if (empty($barcode)) {
+            return response()->json(['error' => 'Barcode parameter is required'], 400);
+        }
+
+        $product = Product::where('barcode', $barcode)->first();
+
+        if ($product) {
+            // Check if product is suspended
+            if ($product->is_suspended) {
+                return response()->json(['error' => 'Product is currently suspended'], 400);
+            }
+            // Optionally, check stock here if needed before returning
+            // if ($product->stock_qty <= 0) {
+            //     return response()->json(['error' => 'Product is out of stock'], 400);
+            // }
+            return response()->json($product);
+        } else {
+            return response()->json(['error' => 'Product not found for the given barcode'], 404);
+        }
     }
 }

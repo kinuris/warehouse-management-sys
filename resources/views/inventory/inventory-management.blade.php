@@ -94,6 +94,7 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Category</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Quantity</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Total Value</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Barcode</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
                     </tr>
@@ -107,6 +108,18 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $product->category->name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $product->stock_qty }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${{ number_format($product->stock_qty * $product->price, 2) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <div class="flex flex-col items-center space-y-2">
+                                <div class="bg-white p-1 border border-gray-200 rounded">
+                                    <img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($product->barcode, 'C128', 1.5, 30, [255, 255, 255], [0, 0, 0]) }}" alt="Barcode">
+                                </div>
+                                <a href="data:image/png;base64,{{ DNS1D::getBarcodePNG($product->barcode, 'C128', 1.5, 30, [255, 255, 255], [0, 0, 0]) }}" 
+                                   download="barcode-{{ $product->internal_id }}.png"
+                                   class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                                    Download
+                                </a>
+                            </div>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                              @if ($product->is_suspended)
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
@@ -141,7 +154,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="px-6 py-10 text-center text-sm text-gray-500">
+                        <td colspan="9" class="px-6 py-10 text-center text-sm text-gray-500">
                             No inventory items found matching your search criteria.
                         </td>
                     </tr>
@@ -156,4 +169,69 @@
         @endif
     </div>
 </div>
+
+<script>
+    function onScanSuccess(decodedText, decodedResult) {
+        // handle the scanned code as you like, for example:
+        console.log(`Code matched = ${decodedText}`, decodedResult);
+        
+        // Don't stop scanner immediately to allow continuous scanning
+        // Instead, temporarily disable scanning while processing
+        html5QrCode.pause();
+
+        // Find product by barcode via AJAX
+        fetch(`{{ route('order_find_by_barcode') }}?barcode=${encodeURIComponent(decodedText)}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 404) {
+                    return response.json().then(err => { throw new Error(err.error || 'Product not found'); });
+                }
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(product => {
+            console.log('Product found:', product);
+            // Add product to stage by submitting the form with a specific action
+            const addUrl = `/order/stage/${product.id}/add`;
+            const tempForm = document.createElement('form');
+            tempForm.method = 'post';
+            tempForm.action = addUrl;
+
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = '{{ csrf_token() }}'; // Add CSRF token
+            tempForm.appendChild(csrfInput);
+
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'hidden';
+            quantityInput.name = 'quantity';
+            quantityInput.value = '1'; // Add quantity 1 by default
+            tempForm.appendChild(quantityInput);
+
+            // Add a flag to keep scanner open after redirect
+            const keepScannerOpenInput = document.createElement('input');
+            keepScannerOpenInput.type = 'hidden';
+            keepScannerOpenInput.name = 'keep_scanner_open';
+            keepScannerOpenInput.value = '1';
+            tempForm.appendChild(keepScannerOpenInput);
+
+            document.body.appendChild(tempForm);
+            tempForm.submit();
+        })
+        .catch(error => {
+            console.error('Error finding product:', error);
+            alert(`Error: ${error.message}`);
+            // Resume scanning if there was an error
+            html5QrCode.resume();
+        });
+    }
+</script>
 @endsection

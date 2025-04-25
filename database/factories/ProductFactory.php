@@ -20,6 +20,7 @@ class ProductFactory extends Factory
     {
         return [
             'internal_id' => 'SBP-' . Product::getNoCollisionID(),
+            'barcode' => fake()->unique()->ean13(), // Add fake barcode
             'name' => fake()->word(),
             'stock_qty' => fake()->numberBetween(0, 100),
             'is_suspended' => false,

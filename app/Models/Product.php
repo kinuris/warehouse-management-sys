@@ -11,6 +11,7 @@ class Product extends Model
 
     protected $fillable = [
         'internal_id',
+        'barcode',
         'name',
         'stock_qty',
         'is_suspended',

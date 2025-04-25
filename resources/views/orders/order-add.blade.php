@@ -3,12 +3,23 @@
 @section('content')
 <div class="container">
     <h1 class="text-3xl font-bold mb-3">Issue Delivery Order</h1>
-    <form class="flex" action="{{ route('order_store') }}" method="post" autocomplete="off">
+    <form class="flex" action="{{ route('order_store') }}" method="post" autocomplete="off" id="order-form">
         @csrf
         <input type="hidden" name="quantity" value="1">
         {{-- Product Selection Section --}}
         <div class="border border-gray-300 rounded p-4 bg-white shadow-sm mr-4 flex-1 flex flex-col">
-            <p class="text-xl font-semibold text-gray-800 mb-4">Product Selection (Total: {{ number_format($totalPrice, 2) }} PHP)</p>
+            <div class="flex justify-between items-center mb-4">
+                <p class="text-xl font-semibold text-gray-800">Product Selection (Total: {{ number_format($totalPrice, 2) }} PHP)</p>
+                <button type="button" id="scan-barcode-btn" class="py-2 px-4 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition-colors">
+                    Scan Barcode
+                </button>
+            </div>
+
+            {{-- Barcode Scanner Placeholder --}}
+            <div id="barcode-scanner-container" class="mb-4 hidden">
+                <div id="reader" class="w-full max-w-md mx-auto"></div>
+                <button type="button" id="close-scanner-btn" class="mt-2 py-1 px-3 bg-red-500 text-white rounded hover:bg-red-600">Close Scanner</button>
+            </div>
 
             {{-- Filters --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 items-end">
@@ -251,21 +262,196 @@
 @endsection
 
 @section('script')
+{{-- Include html5-qrcode library --}}
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script>
     const search = document.getElementById('search')
     const category = document.getElementById('category')
     const filterBtn = document.getElementById('filter-btn')
-
     filterBtn.addEventListener('click', function() {
-        // Use the correct route for filtering delivery orders
+        // Use the correct route name 'order_add' and encodeURIComponent
         window.location.href = "{{ route('order_add') }}?search=" + encodeURIComponent(search.value) + '&category=' + encodeURIComponent(category.value)
     });
 
-    // Optional: Add event listener for Enter key on search input
     search.addEventListener('keypress', function(event) {
         if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent form submission if inside a form
-            filterBtn.click(); // Trigger the filter button click
+            event.preventDefault();
+            filterBtn.click();
+        }
+    });
+
+    // Barcode Scanner Logic
+    const scanBtn = document.getElementById('scan-barcode-btn');
+    const scannerContainer = document.getElementById('barcode-scanner-container');
+    const closeScannerBtn = document.getElementById('close-scanner-btn');
+    const readerElement = document.getElementById('reader');
+    const orderForm = document.getElementById('order-form');
+    let html5QrCode = null;
+
+    scanBtn.addEventListener('click', () => {
+        scannerContainer.classList.remove('hidden');
+        startScanner();
+    });
+
+    closeScannerBtn.addEventListener('click', () => {
+        stopScanner();
+    });
+
+    function startScanner() {
+        // Ensure the reader element is clean and recreate the instance
+        readerElement.innerHTML = '';
+        // Check if an instance already exists, if so, clear it first.
+        // This helps prevent issues if startScanner is called multiple times without stopping.
+        if (html5QrCode) {
+             try {
+                 if (html5QrCode.isScanning) {
+                     html5QrCode.stop();
+                 }
+                 html5QrCode.clear(); // Clear previous instance resources
+             } catch (e) {
+                 console.error("Error clearing previous scanner instance:", e);
+             }
+        }
+        html5QrCode = new Html5Qrcode("reader");
+
+        const config = {
+            fps: 10,
+            qrbox: {
+                width: 180,
+                height: 180
+            }
+        };
+
+        html5QrCode.start({
+                facingMode: "environment"
+            }, config, onScanSuccess, onScanFailure)
+            .catch(err => {
+                console.error(`Unable to start scanning, error: ${err}`);
+                alert('Error starting scanner. Please ensure camera permissions are granted and try refreshing the page.');
+                stopScanner(); // Ensure scanner UI is hidden if start fails
+            });
+
+        // Ensure container is visible after attempting to start
+        scannerContainer.classList.remove('hidden');
+    }
+
+    function stopScanner() {
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.stop().then(ignore => {
+                console.log("QR Code scanning stopped.");
+                // Optionally clear the instance after stopping
+                // html5QrCode.clear();
+                // html5QrCode = null; // Reset the variable if you want a completely new instance next time
+            }).catch(err => {
+                console.error("Failed to stop scanning.", err);
+            });
+        } else {
+             console.log("Scanner not running or already stopped.");
+        }
+        scannerContainer.classList.add('hidden');
+        readerElement.innerHTML = ''; // Clear the reader element content
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+        // handle the scanned code as you like, for example:
+        console.log(`Code matched = ${decodedText}`, decodedResult);
+
+        // Don't stop scanner immediately to allow continuous scanning
+        // Instead, temporarily disable scanning while processing
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.pause(); // Pause scanning
+        }
+
+        // Find product by barcode via AJAX
+        fetch(`{{ route('order_find_by_barcode') }}?barcode=${encodeURIComponent(decodedText)}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Product not found');
+                        });
+                    }
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(product => {
+                console.log('Product found:', product);
+                // Add product to stage by submitting the form with a specific action
+                const addUrl = `/order/stage/${product.id}/add`;
+                const tempForm = document.createElement('form');
+                tempForm.method = 'post';
+                tempForm.action = addUrl;
+
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = '{{ csrf_token() }}'; // Add CSRF token
+                tempForm.appendChild(csrfInput);
+
+                const quantityInput = document.createElement('input');
+                quantityInput.type = 'hidden';
+                quantityInput.name = 'quantity';
+                quantityInput.value = '1'; // Add quantity 1 by default
+                tempForm.appendChild(quantityInput);
+
+                // Add a flag to keep scanner open after redirect
+                const keepScannerOpenInput = document.createElement('input');
+                keepScannerOpenInput.type = 'hidden';
+                keepScannerOpenInput.name = 'keep_scanner_open';
+                keepScannerOpenInput.value = '1';
+                tempForm.appendChild(keepScannerOpenInput);
+
+                document.body.appendChild(tempForm);
+                tempForm.submit();
+
+                // Note: The page will reload due to form submission.
+                // The 'keep_scanner_open' logic in DOMContentLoaded will handle reopening.
+            })
+            .catch(error => {
+                console.error('Error finding product:', error);
+                alert(`Error: ${error.message}`);
+                // Resume scanning if there was an error and scanner is paused
+                if (html5QrCode && !html5QrCode.isScanning) {
+                    try {
+                        html5QrCode.resume();
+                    } catch (e) {
+                        console.error("Error resuming scanner:", e);
+                        // If resuming fails, might need to stop/start again
+                        stopScanner();
+                        // Optionally try restarting
+                        // startScanner();
+                    }
+                }
+            });
+    }
+
+    function onScanFailure(error) {
+        // handle scan failure, usually better to ignore and keep scanning.
+        // console.warn(`Code scan error = ${error}`);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if we should keep the scanner open (from a previous scan)
+        // Use Blade directive to safely output boolean
+        const keepScannerOpen = @json(Session::has('keep_scanner_open'));
+
+        if (keepScannerOpen) {
+            // Don't automatically call startScanner here if the container is already visible
+            // The user might have closed it manually before the page fully loaded.
+            // Instead, just ensure the container is visible. The user can click "Scan" again if needed.
+            // Or, if the intention is to always restart scanning after adding, call startScanner.
+             scannerContainer.classList.remove('hidden');
+             startScanner(); // Re-initialize and start scanning
+
+            // Forget the session key after using it so it doesn't persist across unrelated page loads
+            @php Session::forget('keep_scanner_open'); @endphp
         }
     });
 </script>

@@ -199,6 +199,7 @@ class DatabaseSeeder extends Seeder
                 'internal_id' => 'SBP-' . Product::getNoCollisionID(),
                 'name' => $fertilizer['name'],
                 'stock_qty' => 100,
+                'barcode' => 'FRT' . random_int(10000, 99999),
                 'is_suspended' => false,
                 'category_id' => Category::query()->where('name', '=', 'Fertilizer')->first()->id,
             ]);
@@ -215,6 +216,7 @@ class DatabaseSeeder extends Seeder
                 'internal_id' => 'SBP-' . Product::getNoCollisionID(),
                 'name' => $seed['name'],
                 'stock_qty' => 100,
+                'barcode' => 'INS' . random_int(10000, 99999),
                 'is_suspended' => false,
                 'category_id' => Category::query()->where('name', '=', 'Insecticide')->first()->id,
             ]);
@@ -231,6 +233,7 @@ class DatabaseSeeder extends Seeder
                 'internal_id' => 'SBP-' . Product::getNoCollisionID(),
                 'name' => $herbicide['name'],
                 'stock_qty' => 100,
+                'barcode' => 'HRB' . random_int(10000, 99999),
                 'is_suspended' => false,
                 'category_id' => Category::query()->where('name', '=', 'Herbicides')->first()->id,
             ]);
@@ -247,6 +250,7 @@ class DatabaseSeeder extends Seeder
                 'internal_id' => 'SBP-' . Product::getNoCollisionID(),
                 'name' => $equipment['name'],
                 'stock_qty' => 100,
+                'barcode' => 'FNG' . random_int(10000, 99999),
                 'is_suspended' => false,
                 'category_id' => Category::query()->where('name', '=', 'Fungicide')->first()->id,
             ]);
@@ -263,6 +267,7 @@ class DatabaseSeeder extends Seeder
                 'internal_id' => 'SBP-' . Product::getNoCollisionID(),
                 'name' => $green['name'],
                 'stock_qty' => 100,
+                'barcode' => 'MOL' . random_int(10000, 99999),
                 'is_suspended' => false,
                 'category_id' => Category::query()->where('name', '=', 'Molliride')->first()->id,
             ]);
@@ -279,6 +284,7 @@ class DatabaseSeeder extends Seeder
                 'internal_id' => 'SBP-' . Product::getNoCollisionID(),
                 'name' => $seed['name'],
                 'stock_qty' => 100,
+                'barcode' => 'VEG' . random_int(10000, 99999),
                 'is_suspended' => false,
                 'category_id' => Category::query()->where('name', '=', 'others')->first()->id,
             ]);
