@@ -104,10 +104,10 @@
                     <tr class="hover:bg-gray-50 transition duration-150 ease-in-out">
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $product->internal_id }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $product->name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${{ number_format($product->price, 2) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ number_format($product->price, 2) }} PHP</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $product->category->name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $product->stock_qty }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${{ number_format($product->stock_qty * $product->price, 2) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ number_format($product->stock_qty * $product->price, 2) }} PHP</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                             <div class="flex flex-col items-center space-y-2">
                                 <div class="bg-white p-1 border border-gray-200 rounded">
