@@ -377,11 +377,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         // Check if we should keep the scanner open (from a previous scan)
-        const keepScannerOpen = {
-            {
-                Session::has('keep_scanner_open') ? 'true' : 'false'
-            }
-        };
+        const keepScannerOpen = {{ Session::has('keep_scanner_open') ? 'true' : 'false' }};
         if (keepScannerOpen) {
             scannerContainer.classList.remove('hidden');
             startScanner();
