@@ -56,7 +56,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $delivery->id }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $delivery->distributor->name ?? 'N/A' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <a class="text-blue-600 hover:text-blue-800 hover:underline" href="{{ route('inventory.edit', ['id' => $delivery->product->id]) }}">
+                            <a class="text-blue-600 hover:text-blue-800 hover:underline" href="{{ route('inventory_edit', ['id' => $delivery->product->id]) }}">
                                 {{ $delivery->product->name ?? 'N/A' }}
                             </a>
                         </td>

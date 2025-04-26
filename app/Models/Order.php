@@ -20,6 +20,11 @@ class Order extends Model
         'is_walk_in', // Added is_walk_in field
     ];
 
+    public function delivery()
+    {
+        return $this->hasOne(DeliveryRecord::class);
+    }
+
     public function getAddressAttribute()
     {
         return $this->customer->address;
