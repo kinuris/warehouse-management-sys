@@ -232,7 +232,7 @@ class OrderController extends Controller
     public function deliveries()
     {
         // Eager load customer for pending deliveries
-        $pending = Order::with('customer')->whereDoesntHave('delivery')->get()->sortByDesc('created_at')->toArray();
+        $pending = Order::with('customer')->whereDoesntHave('delivery')->get()->sortByDesc('created_at');
 
         return view('orders.order-deliveries')
             ->with('pending', $pending);

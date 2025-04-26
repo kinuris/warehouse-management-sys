@@ -29,7 +29,7 @@
                     </td>
                 </tr>
                 @else
-                @foreach(array_filter($pending, fn($order) => !$order->isWalkIn()) as $order)
+                @foreach($pending->filter(fn($order) => !$order->isWalkIn()) as $order)
                 <tr class="hover:bg-gray-50">
                     <td class="py-3 px-4 border-b border-gray-200 font-medium">#{{ $order->id }}</td>
                     <td class="py-3 px-4 border-b border-gray-200">{{ $order->client_name }}</td>
@@ -74,7 +74,7 @@
         @if(count($pending) === 0)
         <p class="text-center py-4">(No Pending Deliveries)</p>
         @else
-        @foreach(array_filter($pending, fn($order) => !$order->isWalkIn()) as $order)
+        @foreach($pending->filter(fn($order) => !$order->isWalkIn()) as $order)
         <div class="bg-white p-4 rounded-lg shadow-md">
             <div class="space-y-2">
                 <div class="flex justify-between">
